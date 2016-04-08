@@ -1,6 +1,7 @@
 var commander = require('commander');
 var simulator = require('./simulator');
 var fs = require('fs');
+var ProgressBar = require('progress');
 
 // Setup command-line arguments
 commander
@@ -20,11 +21,14 @@ if (commander.games < 1) {
     process.exit(1);
 }
 
+// Setup the ProgressBar
+var pbar = new ProgressBar('[:percent]:bar[100%] :etas', { total: commander.games });
+
 // Run the specified number of games and get the scores
 gameScores = [];
 for (var i = 1; i <= commander.games; i++) {
     var score = simulator.simulate();
-    console.log("Game " + i + "/" + commander.games + " simulated with final score: " + score);
+    pbar.tick();
     gameScores.push(score);
 }
 
