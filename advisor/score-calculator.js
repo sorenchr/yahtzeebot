@@ -2,6 +2,12 @@ module.exports = (function() {
 
     var mod = {};
 
+    /**
+     * Gets the score for the given category and roll.
+     * @param category The category, a number between 0 and 14.
+     * @param roll The 5-dice roll.
+     * @returns {*} The score for the given category and roll.
+     */
     mod.getCategoryScore = function(category, roll) {
         switch(category) {
             case 0:
@@ -10,7 +16,7 @@ module.exports = (function() {
             case 3:
             case 4:
             case 5:
-                return getNumberOfDice(category + 1, roll) * (category + 1)
+                return getNumberOfDice(category + 1, roll) * (category + 1);
             case 6:
                 return getOnePairScore(roll);
             case 7:
@@ -34,6 +40,12 @@ module.exports = (function() {
         }
     };
 
+    /**
+     * Returns the number of dice in the roll with the given face-value.
+     * @param faceValue The face-value to check for.
+     * @param roll The roll to search.
+     * @returns {number} The number of dice in the roll with the given face-value.
+     */
     function getNumberOfDice(faceValue, roll) {
         var numberOfDice = 0;
 
@@ -44,6 +56,11 @@ module.exports = (function() {
         return numberOfDice;
     }
 
+    /**
+     * Returns the one-pair score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The one-pair score for this roll.
+     */
     function getOnePairScore(roll) {
         var highestPair = 0;
 
@@ -56,6 +73,11 @@ module.exports = (function() {
         return highestPair * 2;
     }
 
+    /**
+     * Returns the two-pair score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The two-pair score for this roll.
+     */
     function getTwoPairsScore(roll) {
         var twoPairScore = 0;
         var numberOfPairs = 0;
@@ -70,6 +92,11 @@ module.exports = (function() {
         return numberOfPairs == 2 ? twoPairScore : 0;
     }
 
+    /**
+     * Returns the three-of-a-kind score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The three-of-a-kind score for this roll.
+     */
     function getThreeOfAKindScore(roll) {
         for (var i = 1; i <= 6; i++) {
             if (getNumberOfDice(i, roll) >= 3) {
@@ -80,6 +107,11 @@ module.exports = (function() {
         return 0;
     }
 
+    /**
+     * Returns the four-of-a-kind score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The four-of-a-kind score for this roll.
+     */
     function getFourOfAKindScore(roll) {
         for (var i = 1; i <= 6; i++) {
             if (getNumberOfDice(i, roll) >= 4) {
@@ -90,6 +122,11 @@ module.exports = (function() {
         return 0;
     }
 
+    /**
+     * Returns the small straight score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The small straight score for this roll.
+     */
     function getSmallStraightScore(roll) {
         var numberOfNeededDice = 0;
 
@@ -102,6 +139,11 @@ module.exports = (function() {
         return numberOfNeededDice == 5 ? 15 : 0;
     }
 
+    /**
+     * Returns the large straight score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The large straight score for this roll.
+     */
     function getLargeStraightScore(roll) {
         var numberOfNeededDice = 0;
 
@@ -114,6 +156,11 @@ module.exports = (function() {
         return numberOfNeededDice == 5 ? 20 : 0;
     }
 
+    /**
+     * Returns the full house score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The full house score for this roll.
+     */
     function getFullHouseScore(roll) {
         var twoOfAKindDiceValue = 0;
         var threeOfAKindDiceValue = 0;
@@ -133,12 +180,22 @@ module.exports = (function() {
         return 0;
     }
 
+    /**
+     * Returns the chance score for this roll.
+     * @param roll The roll to check.
+     * @returns {*} The chance score for this roll.
+     */
     function getChanceScore(roll) {
         return roll.reduce(function(x, y) {
             return x + y;
         });
     }
 
+    /**
+     * Returns the yahtzee score for this roll.
+     * @param roll The roll to check.
+     * @returns {number} The yahtzee score for this roll.
+     */
     function getYahtzeeScore(roll) {
         for (var i = 1; i <= 6; i++) {
             if (getNumberOfDice(i, roll) == 5) {
