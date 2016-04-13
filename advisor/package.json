@@ -5,5 +5,9 @@
   "dependencies": {
     "commander": "^2.9.0",
     "progress": "^1.1.8"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "chai": "^3.5.0",
   }
 }
