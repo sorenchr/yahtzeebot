@@ -22,7 +22,7 @@ if (commander.games < 1) {
 }
 
 // Setup the ProgressBar
-var pbar = new ProgressBar('[:percent]:bar[100%] :etas', { total: commander.games });
+var pbar = new ProgressBar('[:percent]:bar[100%] :etas rem.', { total: commander.games });
 
 // Run the specified number of games and get the scores
 gameScores = [];
