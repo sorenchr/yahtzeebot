@@ -5,12 +5,14 @@ module.exports = (function() {
 
     var mod = {};
 
+    /**
+     * Simulates a single game of yahtzee using the strategy implemented
+     * in the advisor module.
+     * @return {number} The score of the yahtzee game.
+     */
     mod.simulate = function() {
         // Initialize game state
-        scorecard = Array(15);
-        for (var i = 0; i < scorecard.length; i++) scorecard[i] = 0;
-        totalScore = 0;
-        upperScore = 0;
+        scorecard = Array(15).fill(0), totalScore = 0, upperScore = 0;
 
         // Loop over all the rounds in the game
         for (var i = 0; i < 15; i++) {
@@ -60,6 +62,11 @@ module.exports = (function() {
         return totalScore;
     };
 
+    /**
+     * Rolls a given number of dice and returns an arrary containing the result.
+     * @param  {number} nDice The number of dice to roll.
+     * @return {object} An array containing the resulting dice.
+     */
     function rollDice(nDice) {
         var dice = Array(nDice);
 
