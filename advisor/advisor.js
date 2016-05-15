@@ -1,6 +1,15 @@
 module.exports = (function() {
 
     var mod = {};
+    var statemap;
+
+    /**
+     * Initializes the module.
+     * @param conf An object containing the settings.
+     */
+    mod.init = function(conf) {
+        if (!!conf.statemap) statemap = conf.statemap;
+    };
 
     /**
      * Returns the best keepers to choose from the given game state.
