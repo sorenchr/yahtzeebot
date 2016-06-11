@@ -9,36 +9,30 @@ module.exports = (function() {
      * @returns {*} The score for the given category and roll.
      */
     mod.getCategoryScore = function(category, roll) {
-        switch(category) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                return getNumberOfDice(category + 1, roll) * (category + 1);
-            case 6:
-                return getOnePairScore(roll);
-            case 7:
-                return getTwoPairsScore(roll);
-            case 8:
-                return getThreeOfAKindScore(roll);
-            case 9:
-                return getFourOfAKindScore(roll);
-            case 10:
-                return getSmallStraightScore(roll);
-            case 11:
-                return getLargeStraightScore(roll);
-            case 12:
-                return getFullHouseScore(roll);
-            case 13:
-                return getChanceScore(roll);
-            case 14:
-                return getYahtzeeScore(roll);
-            default:
-                throw "UnknownCategoryError";
+        if ((category >= 0) && (category <= 5)) {
+            return getNumberOfDice(category + 1, roll) * (category + 1);
+        } else if (category == 6) {
+            return getOnePairScore(roll);
+        } else if (category == 7) {
+            return getTwoPairsScore(roll);
+        } else if (category == 8) {
+            return getThreeOfAKindScore(roll);
+        } else if (category == 9) {
+            return getFourOfAKindScore(roll);
+        } else if (category == 10) {
+            return getSmallStraightScore(roll);
+        } else if (category == 11) {
+            return getLargeStraightScore(roll);
+        } else if (category == 12) {
+            return getFullHouseScore(roll);
+        } else if (category == 13) {
+            return getChanceScore(roll);
+        } else if (category == 14) {
+            return getYahtzeeScore(roll);
         }
-    };
+
+        throw "UnknownCategoryError";
+    }
 
     /**
      * Returns the number of dice in the roll with the given face-value.
