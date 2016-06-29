@@ -1,98 +1,117 @@
 var _ = require('lodash');
 
-var DiceTreeNode = function(value, path, parent, children, parentLinks, childLinks) {
+var DiceTreeNode = function(value) {
     this.value = value ? value : null;
-    this.path = path ? path : [];
-    this.parent = parent ? parent : null;
-    this.children = children || {};
-    this.parentLinks = parentLinks || [];
-    this.childLinks = childLinks || [];
+    this.path = [];
+    this.parents = [];
+    this.children = { linked: [], descendants: {} };
 }
 
 DiceTreeNode.prototype.getNode = function(path) {
-    // This node is at the empty path
     if (path.length === 0) return this;
-
-    // Follow the path recursively
-    return this.children[path[0]].getNode(path.slice(1));
+    return this.children.descendants[path[0]].getNode(path.slice(1));
 }
 
-DiceTreeNode.prototype.getLeafNodePaths = function(followLinks) {
+DiceTreeNode.prototype.addChild = function(node, linked) {
+    if (linked) {
+        this.children.linked.push(node);
+    } else {
+        node.path = this.path.concat(node.value);
+        this.children.descendants[node.value] = node;
+    }
+
+    node.parents.push(this);
+}
+
+DiceTreeNode.prototype.getChildren = function() {
+    return _.concat(this.children.linked, _.values(this.children.descendants));
+}
+
+DiceTreeNode.prototype.getLeafNodePaths = function(visitedNodes) {
+    // Initialize the visited nodes if necessary
+    if (typeof visitedNodes === 'undefined') visitedNodes = [];
+
+    // Add this node to the list of visited nodes
+    visitedNodes.push(this);
+
     // Check if this node is the bottom of the tree
-    if (_.isEmpty(this.children)) return [this.path];
+    if (_.isEmpty(this.children.descendants)) return [this.path];
 
-    // Get the leaf node paths of every child
-    var childPaths = _.values(this.children).map(child => child.getLeafNodePaths(false));
-
-    // Get the leaf node paths of every child link
-    var childLinkPaths = followLinks ? this.childLinks.map(child => child.getLeafNodePaths(true)) : [];
-
-    // Return the total list of paths
-    return childPaths.concat(childLinkPaths).reduce((prev, curr) => prev.concat(curr));
+    // Visit each child not already visited
+    return _.flatten(this.getChildren().filter((child) => !_.includes(visitedNodes, child)).
+                map((child) => child.getLeafNodePaths(visitedNodes)));
 }
 
-DiceTreeNode.prototype.getRootNodePaths = function(followLinks) {
-    // Check if this is the root node
-    if (!this.parent.parent) return [this.path];
+DiceTreeNode.prototype.getRootNodePaths = function(visitedNodes) {
+    // Initialize the visited nodes if necessary
+    if (typeof visitedNodes === 'undefined') visitedNodes = [];
 
-    // Get the paths for the parent node
-    var parentPaths = this.parent.getRootNodePaths(false);
+    // Add this node to the list of visited nodes
+    visitedNodes.push(this);
 
-    // Get the paths for the linked parents
-    var parentLinkPaths = followLinks ? this.parentLinks.map(parent => parent.getRootNodePaths(true)) : [];
+    // Check if this node is the top of the tree
+    if (_.isEmpty(this.parents)) return [this.path];
 
-    // Return the total list of paths
-    return [this.path].concat(parentPaths).concat(parentLinkPaths);
+    // Get the root node paths for each parent
+    var rootNodePaths = this.parents.filter((parent) => !_.includes(visitedNodes, parent)).
+            map((parent) => parent.getRootNodePaths(visitedNodes));
+
+    return _.concat([this.path], _.flatten(rootNodePaths));
 }
 
-var DiceTree = function() {
-    // Setup the root node
-    this.tree = new DiceTreeNode(3);
+var DiceTree = function(depth, maxValue) {
+    this.rootNode = new DiceTreeNode(maxValue);
 
-    // Setup a list of nodes for the previous depth
-    var parentNodes = [this.tree];
+    // Setup the list of nodes for the previous depth
+    var parentNodes = [this.rootNode];
 
-    for (var depth = 1; depth <= 4; depth++) {
+    for (var i = 0; i < depth; i++) {
+        // Setup the list for the nodes at this depth
         var childNodes = [];
 
-        // Create child nodes for each parent at the previous depth
-        for (var i = 0; i < parentNodes.length; i++) {
-            // Only use values up until the parent value
-            for (var value = 1; value <= parentNodes[i].value; value++) {
-                // Create new node
-                var path = parentNodes[i].path.concat(value);
-                var node = new DiceTreeNode(value, path, parentNodes[i]);
-
-                // Attach to parent at proper index
-                parentNodes[i].children[value] = node;
+        // Generate child nodes for each node at the previous depth
+        parentNodes.forEach(function(parentNode) {
+            // Only generate nodes with values up to the parent node's value
+            for (var value = 1; value <= parentNode.value; value++) {
+                var node = new DiceTreeNode(value);
+                parentNode.addChild(node, false);
 
                 // Check if the node should be linked to any other parent nodes
-                for (var j = 0; j < parentNodes.length; j++) {
-                    var contains = parentNodes[j].path.reduce((prev, curr, k) => prev && path[k+1] == curr, true);
-                    if (contains && parentNodes[j] != parentNodes[i]) {
-                        parentNodes[j].childLinks.push(node);
-                        node.parentLinks.push(parentNodes[j]);
+                parentNodes.forEach(function(otherParentNode) {
+                    var contains = arrayContains(node.path, otherParentNode.path);
+                    if (contains && parentNode !== otherParentNode) {
+                        otherParentNode.addChild(node, true);
                     }
-                }
+                });
 
                 // Add to the list of nodes at this depth
                 childNodes.push(node);
             }
-        }
+        });
 
         parentNodes = childNodes;
     }
+
+    this.rootNode.value = null;
 }
 
-DiceTree.prototype.getRolls = function(keepers) {
-    // Get the sorted path
-    path = _.orderBy(keepers, _.identity, ['desc']);
+function arrayContains(arr1, arr2) {
+    if (arr1 === arr2) return true;
+    if (arr1 == null || arr2 == null) return false;
+    if (arr1.length < arr2.length) return false;
 
-    // Get the node at the specified path
-    var node = this.tree.getNode(path);
+    var count = {};
 
-    // Return the paths for all the leaf nodes reachable from the node
-    return node.getLeafNodePaths(true);
+    for (var i = 0; i < arr1.length; i++) {
+        if (!count[arr1[i]]) count[arr1[i]] = 0;
+        count[arr1[i]]++;
+    }
+
+    for (var i = 0; i < arr2.length; i++) {
+        if (!count[arr2[i]] || --count[arr2[i]] < 0) return false;
+    }
+
+    return true;
 }
 
 DiceTree.prototype.getKeepers = function(roll) {
@@ -100,10 +119,21 @@ DiceTree.prototype.getKeepers = function(roll) {
     path = _.orderBy(roll, _.identity, ['desc']);
 
     // Get the node at the specified path
-    var node = this.tree.getNode(path);
+    var node = this.rootNode.getNode(path);
 
     // Return all the possible paths to the root node from the node
-    return node.getRootNodePaths(true).concat([[]]);
+    return node.getRootNodePaths();
+}
+
+DiceTree.prototype.getRolls = function(keepers) {
+    // Get the sorted path
+    path = _.orderBy(keepers, _.identity, ['desc']);
+
+    // Get the node at the specified path
+    var node = this.rootNode.getNode(path);
+
+    // Return the paths for all the leaf nodes reachable from the node
+    return node.getLeafNodePaths();
 }
 
 module.exports = DiceTree;
