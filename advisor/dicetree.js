@@ -59,6 +59,20 @@ DiceTreeNode.prototype.getRootNodePaths = function(visitedNodes) {
     return _.concat([this.path], _.flatten(rootNodePaths));
 }
 
+DiceTreeNode.prototype.getPaths = function(visitedNodes) {
+    // Initialize the visited nodes if necessary
+    if (typeof visitedNodes === 'undefined') visitedNodes = [];
+
+    // Add this node to the list of visited nodes
+    visitedNodes.push(this);
+
+    // Get the paths for each child
+    var childPaths = this.getChildren().filter((child) => !_.includes(visitedNodes, child))
+            .map((child) => child.getPaths(visitedNodes));
+
+    return _.concat([this.path], _.flatten(childPaths));
+}
+
 var DiceTree = function(depth, maxValue) {
     this.rootNode = new DiceTreeNode(maxValue);
 
@@ -134,6 +148,14 @@ DiceTree.prototype.getRolls = function(keepers) {
 
     // Return the paths for all the leaf nodes reachable from the node
     return node.getLeafNodePaths();
+}
+
+DiceTree.prototype.getAllRolls = function() {
+    return this.getRolls([]);
+}
+
+DiceTree.prototype.getAllKeepers = function() {
+    return this.rootNode.getPaths();
 }
 
 module.exports = DiceTree;
