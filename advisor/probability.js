@@ -17,4 +17,4 @@ probability.getRollProbability = function(roll) {
 
     // Calculate the roll probability
     return facs[roll.length] / (Math.pow(6, roll.length) * cdprod);
-}
+};

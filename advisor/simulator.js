@@ -58,7 +58,7 @@ simulator.simulate = function() {
     }
 
     return totalScore;
-}
+};
 
 /**
  * Rolls a given number of dice and returns an arrary containing the result.

@@ -30,7 +30,7 @@ sc.getCategoryScore = function(category, roll) {
     }
 
     throw "UnknownCategoryError";
-}
+};
 
 /**
  * Returns the number of dice in the roll with the given face-value.
