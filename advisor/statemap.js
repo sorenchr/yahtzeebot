@@ -3,6 +3,7 @@ var StateMap = function() {
 };
 
 function getKey(scorecard, upperScore) {
+    if (upperScore > 63) upperScore = 63;
     return scorecard.map(x => x ? 1 : 0).join('') + '|' + upperScore;
 }
 
