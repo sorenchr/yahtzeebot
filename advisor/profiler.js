@@ -2,6 +2,7 @@ var commander = require('commander');
 var simulator = require('./simulator');
 var fs = require('fs');
 var ProgressBar = require('progress');
+var _ = require('lodash');
 
 // Setup command-line arguments
 commander
@@ -50,7 +51,4 @@ if (commander.output) {
     fileStream.end();
 }
 
-// Calculate the average and output the results
-var sum = gameScores.reduce(function(a, b) { return a + b });
-var avg = sum / gameScores.length;
-console.log("Done. Simulated " + gameScores.length + " games with an average score of: " + avg);
+console.log("Done. Simulated " + gameScores.length + " games with an average score of: " + _.mean(gameScores));
