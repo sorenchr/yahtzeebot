@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var probability = module.exports;
-var facs = [1, 1, 2, 6, 24, 120]; // Pre-calculated factorials
+var facs = {};
 
 probability.getRollProbability = function(roll) {
     // Get the cardinality of the roll as a flat array
@@ -12,9 +12,15 @@ probability.getRollProbability = function(roll) {
 
     // Calculate the cardinality product of the roll
     var cdprod = cardinality.reduce(function(x, y) {
-        return x * facs[y];
+        return x * fac(y);
     });
 
     // Calculate the roll probability
-    return facs[roll.length] / (Math.pow(6, roll.length) * cdprod);
+    return fac(roll.length) / (Math.pow(6, roll.length) * cdprod);
 };
+
+function fac(n) {
+    if (n in facs) return facs[n];
+    facs[n] = n == 0 ? 1 : n * fac(n - 1);
+    return facs[n];
+}
