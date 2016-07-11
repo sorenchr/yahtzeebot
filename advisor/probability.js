@@ -1,8 +1,13 @@
 var _ = require('lodash');
 
 var probability = module.exports;
-var facs = {};
+var facs = {}; // Will contain all cached factorials
 
+/**
+ * Returns the probability of rolling the given dice.
+ * @param roll The dice to calculate the probability for.
+ * @returns {number} The probability of rolling the given dice.
+ */
 probability.getRollProbability = function(roll) {
     // Get the cardinality of the roll as an array
     var cardinality = _.values(_.countBy(roll));
@@ -14,6 +19,11 @@ probability.getRollProbability = function(roll) {
     return fac(roll.length) / (Math.pow(6, roll.length) * cdProd);
 };
 
+/**
+ * Computes the n'th factorial.
+ * @param n The number to compute the factorial for.
+ * @returns {*} The n'th factorial.
+ */
 function fac(n) {
     if (n in facs) return facs[n];
     facs[n] = n == 0 ? 1 : n * fac(n - 1);
