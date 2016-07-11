@@ -10,38 +10,33 @@ var simulator = module.exports;
  */
 simulator.simulate = function() {
     // Initialize game state
-    scorecard = Array(15).fill(0), totalScore = 0, upperScore = 0;
+    var scorecard = new Array(15).fill(0), totalScore = 0, upperScore = 0;
 
     // Loop over all the rounds in the game
     for (var i = 0; i < 15; i++) {
         // Roll the dice
-        dice = rollDice(5);
+        var dice = rollDice(5);
 
         // Loop over all the rolls left
-        for (var rollsLeft = 3; rollsLeft > 0; rollsLeft--) {
+        for (var rollsLeft = 2; rollsLeft > 0; rollsLeft--) {
             // Get the best keepers for these dice
-            var keepers = advisor.getBestKeepers(scorecard, upperScore, dice, rollsLeft)
+            var keepers = advisor.getBestKeepers(scorecard, upperScore, dice, rollsLeft);
 
             // Roll the remaining dice
-            newDice = rollDice(5 - keepers.length);
-
-            // Get the face values of the keepers
-            var keepersValues = keepers.map(function(x) {
-                return dice[x];
-            });
+            var newDice = rollDice(5 - keepers.length);
 
             // Merge the new dice with the keepers
-            dice = keepersValues.concat(newDice);
+            dice = keepers.concat(newDice);
         }
 
         // Get the best category to score in
-        category = advisor.getBestCategory(scorecard, upperScore, dice);
+        var category = advisor.getBestCategory(scorecard, upperScore, dice);
 
         // Mark the scorecard
         scorecard[category] = 1;
 
         // Get the score for the category
-        score = scorecalc.getCategoryScore(category, dice);
+        var score = scorecalc.getCategoryScore(category, dice);
 
         // Check if the score should be added to the upper score
         if (category < 6) {
@@ -54,7 +49,7 @@ simulator.simulate = function() {
 
     // Check if the upper score has released a bonus
     if (upperScore >= 63) {
-        score += 50;
+        totalScore += 50;
     }
 
     return totalScore;
@@ -66,9 +61,9 @@ simulator.simulate = function() {
  * @return {object} An array containing the resulting dice.
  */
 function rollDice(nDice) {
-    var dice = Array(nDice);
+    var dice = new Array(nDice);
 
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < dice.length; i++) {
         dice[i] = Math.floor(Math.random() * 6) + 1;
     }
 
