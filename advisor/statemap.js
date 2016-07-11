@@ -1,20 +1,35 @@
+var _ = require('lodash');
+
 var StateMap = function() {
     this.map = {};
 };
 
-function getKey(scorecard, upperScore) {
-    if (upperScore > 63) upperScore = 63;
-    return scorecard.map(x => x ? 1 : 0).join('') + '|' + upperScore;
+function formatScorecard(scorecard) {
+    return scorecard.map(x => x ? 1 : 0).join('');
 }
 
 StateMap.prototype.getEV = function(scorecard, upperScore) {
-    var key = getKey(scorecard, upperScore);
-    return this.map[key];
+    scorecard = formatScorecard(scorecard);
+    if (upperScore > 63) upperScore = 63;
+    if (!(scorecard in this.map) || !(upperScore in this.map[scorecard])) return null;
+    return this.map[scorecard][upperScore];
 };
 
 StateMap.prototype.addEV = function (scorecard, upperScore, ev) {
-    var key = getKey(scorecard, upperScore);
-    this.map[key] = ev;
+    scorecard = formatScorecard(scorecard);
+    if (upperScore > 63) upperScore = 63;
+    if (!(scorecard in this.map)) this.map[scorecard] = {};
+    this.map[scorecard][upperScore] = ev;
+};
+
+StateMap.prototype.size = function() {
+    var entries = 0;
+
+    for (var scorecard in this.map) {
+        entries += _.size(this.map[scorecard]);
+    }
+
+    return entries;
 };
 
 StateMap.prototype.toJSON = function() {
@@ -24,11 +39,11 @@ StateMap.prototype.toJSON = function() {
 StateMap.fromJSON = function(json) {
     var map = new StateMap();
 
-    for (var key in json) {
-        var keySplit = key.split('|');
-        var scorecard = keySplit[0].split('');
-        var upperScore = keySplit[1];
-        map.addEV(scorecard, upperScore, json[key]);
+    for (var scorecard in json) {
+        var scorecardArray = scorecard.split('').map(x => x == 1 ? true : false);
+        for (var upperScore in json[scorecard]) {
+            map.addEV(scorecardArray, upperScore, json[scorecard][upperScore]);
+        }
     }
 
     return map;
