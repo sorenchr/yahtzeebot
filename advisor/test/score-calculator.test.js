@@ -1,7 +1,9 @@
 var chai = require('chai');
 var assert = chai.assert;
+var proxyquire = require('proxyquire').noPreserveCache();
+var ArgumentError = require('../argumenterror');
 
-describe('scorecard ', function() {
+describe('score-calculator', function() {
     describe('#getCategoryScore', function() {
         describe('ones', function() {
             it('should return 3', function() {
@@ -237,6 +239,24 @@ describe('scorecard ', function() {
                 var dice = [1, 1, 4, 1, 1];
                 assert.equal(scorecalc.getCategoryScore(14, dice), 0);
             });
+        });
+
+        it('should throw error on invalid category', function() {
+            var validatorMock = {
+                isValidRoll: function(roll) { return true },
+                isValidCategory: function(category) { return false }
+            };
+            var scorecalc = proxyquire('../score-calculator', { './validator': validatorMock });
+            assert.throws(scorecalc.getCategoryScore.bind(scorecalc, 0, [1,2,3,4,5]), ArgumentError);
+        });
+
+        it('should throw error on invalid roll', function() {
+            var validatorMock = {
+                isValidRoll: function(roll) { return false },
+                isValidCategory: function(category) { return true }
+            };
+            var scorecalc = proxyquire('../score-calculator', { './validator': validatorMock });
+            assert.throws(scorecalc.getCategoryScore.bind(scorecalc, 0, [1,2,3,4,5]), ArgumentError);
         });
     });
 });
