@@ -12,7 +12,7 @@ var facs = {}; // Will contain all cached factorials
  */
 probability.getDiceProbability = function(dice) {
     // Validate dice
-    if (!validator.isValidDice(dice)) throw new ArgumentError('Variable \'dice\' is not a valid set of dice');
+    if (!validator.isValidDice(dice)) throw new ArgumentError('Invalid dice: ' + dice);
 
     // Get the cardinality of the roll as an array
     var cardinality = _.values(_.countBy(dice));
