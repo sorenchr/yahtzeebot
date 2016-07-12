@@ -1,5 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
+var proxyquire = require('proxyquire');
 var ArgumentError = require('../argumenterror');
 
 describe('probability ', function() {
@@ -130,9 +131,10 @@ describe('probability ', function() {
             assert.equal(prob.getDiceProbability(roll), 0.16666666666666666);
         });
 
-        it('should throw error on non-array input', function() {
-            var prob = require('../probability');
-            assert.throws(prob.getDiceProbability.bind(prob, 'abc'), ArgumentError);
+        it('should throw error on invalid input', function() {
+            var validatorMock = { isValidDice: function(dice) { return false } };
+            var prob = proxyquire('../probability', { './validator': validatorMock });
+            assert.throws(prob.getDiceProbability.bind(prob, [1,2]), ArgumentError);
         });
     });
 });
