@@ -1,5 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
+var ArgumentError = require('../argumenterror');
 
 describe('probability ', function() {
     describe('#getRollProbability', function() {
@@ -64,6 +65,74 @@ describe('probability ', function() {
             var prob = require('../probability');
             var roll = [4,4,4,4,4];
             assert.equal(prob.getRollProbability(roll), 0.0001286008230452675);
+        });
+
+        // 4 dice (unique dice)
+        it('should return 0.018518518518518517 for [1,2,3,4]', function() {
+            var prob = require('../probability');
+            var roll = [1,2,3,4];
+            assert.equal(prob.getRollProbability(roll), 0.018518518518518517);
+        });
+
+        // 4 dice (some of the same)
+        it('should return 0.009259259259259259 for [2,2,3,4]', function() {
+            var prob = require('../probability');
+            var roll = [2,2,3,4];
+            assert.equal(prob.getRollProbability(roll), 0.009259259259259259);
+        });
+
+        // 4 dice (all the same)
+        it('should return 0.0007716049382716049 for [4,4,4,4]', function() {
+            var prob = require('../probability');
+            var roll = [4,4,4,4];
+            assert.equal(prob.getRollProbability(roll), 0.0007716049382716049);
+        });
+        
+        // 3 dice (unique dice)
+        it('should return 0.027777777777777776 for [1,2,3]', function() {
+            var prob = require('../probability');
+            var roll = [1,2,3];
+            assert.equal(prob.getRollProbability(roll), 0.027777777777777776);
+        });
+        
+        // 3 dice (some of the same)
+        it('should return 0.027777777777777776 for [3,2,3]', function() {
+            var prob = require('../probability');
+            var roll = [1,2,3];
+            assert.equal(prob.getRollProbability(roll), 0.027777777777777776);
+        });
+        
+        // 3 dice (all the same)
+        it('should return 0.004629629629629629 for [3,3,3]', function() {
+            var prob = require('../probability');
+            var roll = [3,3,3];
+            assert.equal(prob.getRollProbability(roll), 0.004629629629629629);
+        });
+        
+        // 2 dice (unique dice)
+        it('should return 0.05555555555555555 for [1,2]', function() {
+            var prob = require('../probability');
+            var roll = [1,2];
+            assert.equal(prob.getRollProbability(roll), 0.05555555555555555);
+        });
+        
+        // 2 dice (all the same)
+        it('should return 0.027777777777777776 for [2,2]', function() {
+            var prob = require('../probability');
+            var roll = [2,2];
+            assert.equal(prob.getRollProbability(roll), 0.027777777777777776);
+        });
+        
+        // 1 die
+        it('should return 0.16666666666666666 for [1]', function() {
+            var prob = require('../probability');
+            var roll = [1];
+            assert.equal(prob.getRollProbability(roll), 0.16666666666666666);
+        });
+
+        it('should throw error on non-array input', function() {
+            var prob = require('../probability');
+            assert.throws(prob.getRollProbability.bind(prob, 'abc'), ArgumentError);
         });
     });
 });

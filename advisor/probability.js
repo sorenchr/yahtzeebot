@@ -1,4 +1,6 @@
 var _ = require('lodash');
+var validator = require('./validator');
+var ArgumentError = require('./argumenterror');
 
 var probability = module.exports;
 var facs = {}; // Will contain all cached factorials
@@ -9,6 +11,9 @@ var facs = {}; // Will contain all cached factorials
  * @returns {number} The probability of rolling the given dice.
  */
 probability.getRollProbability = function(roll) {
+    // Validate roll
+    if (!validator.isValidDice(roll)) throw new ArgumentError('Variable \'roll\' is not a valid set of dice');
+
     // Get the cardinality of the roll as an array
     var cardinality = _.values(_.countBy(roll));
 
