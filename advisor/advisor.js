@@ -69,7 +69,7 @@ function generateKeepers(nextRolls) {
         dicetree.getRolls(keepers).forEach(function(roll) {
             var remDice = subtractDice(roll, keepers);
             var rollEV = nextRolls[roll.join('')];
-            evSum += prob.getRollProbability(remDice) * rollEV;
+            evSum += prob.getDiceProbability(remDice) * rollEV;
         });
 
         keepersEV[keepers.join('')] = evSum;

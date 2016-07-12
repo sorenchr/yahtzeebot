@@ -7,21 +7,21 @@ var facs = {}; // Will contain all cached factorials
 
 /**
  * Returns the probability of rolling the given dice.
- * @param roll The dice to calculate the probability for.
+ * @param dice The dice to calculate the probability for.
  * @returns {number} The probability of rolling the given dice.
  */
-probability.getRollProbability = function(roll) {
-    // Validate roll
-    if (!validator.isValidDice(roll)) throw new ArgumentError('Variable \'roll\' is not a valid set of dice');
+probability.getDiceProbability = function(dice) {
+    // Validate dice
+    if (!validator.isValidDice(dice)) throw new ArgumentError('Variable \'dice\' is not a valid set of dice');
 
     // Get the cardinality of the roll as an array
-    var cardinality = _.values(_.countBy(roll));
+    var cardinality = _.values(_.countBy(dice));
 
-    // Calculate the cardinality product of the roll
+    // Calculate the cardinality product of the dice
     var cdProd = cardinality.reduce((x,y) => x * fac(y), 1);
 
-    // Calculate the roll probability
-    return fac(roll.length) / (Math.pow(6, roll.length) * cdProd);
+    // Calculate the dice probability
+    return fac(dice.length) / (Math.pow(6, dice.length) * cdProd);
 };
 
 /**
