@@ -2,7 +2,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var validator = require('../validator');
 
-describe('validator ', function() {
+describe('validator', function() {
     describe('#isValidDice', function () {
         it('should return false on non-array input', function () {
             assert.isFalse(validator.isValidDice('abc'));
