@@ -18,3 +18,10 @@ validator.isValidCategory = function(category) {
     if (category < 0 || category > 14) return false;
     return true;
 };
+
+validator.isValidScorecard = function(scorecard) {
+    if (!Array.isArray(scorecard)) return false;
+    if (!scorecard.every(x => typeof x === 'boolean')) return false;
+    if (scorecard.length != 15) return false;
+    return true;
+};

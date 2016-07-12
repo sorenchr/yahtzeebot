@@ -95,4 +95,40 @@ describe('validator', function() {
             }
         });
     });
+
+    describe('#isValidScorecard', function() {
+        it('should return false on non-array input', function () {
+            assert.isFalse(validator.isValidScorecard('[2]'));
+            assert.isFalse(validator.isValidScorecard('abc'));
+            assert.isFalse(validator.isValidScorecard(2.2));
+            assert.isFalse(validator.isValidScorecard({}));
+            assert.isFalse(validator.isValidScorecard(null));
+            assert.isFalse(validator.isValidScorecard(true));
+            assert.isFalse(validator.isValidScorecard(undefined));
+            assert.isFalse(validator.isValidScorecard(NaN));
+            assert.isFalse(validator.isValidScorecard(new Date()));
+            assert.isFalse(validator.isValidScorecard([2]));
+        });
+
+        it('should return false on array with non-boolean elements', function() {
+            var scorecard = new Array(15).fill(true);
+            var elms = ['[2]', 'true', 2.2, {}, null, undefined, NaN, new Date(), [2]];
+            for (var i = 0; i < elms.length; i++) {
+                scorecard[5] = elms[i];
+                assert.isFalse(validator.isValidScorecard(scorecard));
+            }
+        });
+
+        it('should return false on boolean array with size not 15', function() {
+            var scorecard1 = new Array(14).fill(true);
+            var scorecard2 = new Array(16).fill(true);
+            assert.isFalse(validator.isValidScorecard(scorecard1));
+            assert.isFalse(validator.isValidScorecard(scorecard2));
+        });
+
+        it('should return true on boolean array with size 15', function() {
+            var scorecard = new Array(15).fill(true);
+            assert.isTrue(validator.isValidScorecard(scorecard));
+        });
+    });
 });
