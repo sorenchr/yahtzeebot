@@ -25,3 +25,9 @@ validator.isValidScorecard = function(scorecard) {
     if (scorecard.length != 15) return false;
     return true;
 };
+
+validator.isValidUpperScore = function(upperScore) {
+    if (!Number.isInteger(upperScore)) return false;
+    if (upperScore < 0) return false;
+    return true;
+};

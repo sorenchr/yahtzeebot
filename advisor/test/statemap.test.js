@@ -1,8 +1,15 @@
 var chai = require('chai');
 var assert = chai.assert;
-var StateMap = require('../statemap');
+var proxyquire = require('proxyquire').noPreserveCache();
+var ArgumentError = require('../argumenterror');
 
 describe('StateMap ', function() {
+    var StateMap;
+
+    beforeEach(function() {
+        StateMap = require('../statemap');
+    });
+
     describe('#constructor', function() {
         it('should construct empty StateMap instance', function() {
             var statemap = new StateMap();
@@ -36,6 +43,36 @@ describe('StateMap ', function() {
             assert.equal(statemap.getEV(scorecard, 63), ev);
             assert.isNull(statemap.getEV(scorecard, 62));
         });
+
+        it('should throw error on invalid scorecard', function() {
+            var validatorMock = { };
+            StateMap = proxyquire('../statemap', { './validator': validatorMock });
+
+            var statemap = new StateMap();
+            var scorecard = new Array(15).fill(true);
+            var upperScore = 100;
+            var ev = 25.2;
+            statemap.addEV(scorecard, upperScore, ev);
+
+            validatorMock.isValidScorecard = function(scorecard) { return false };
+
+            assert.throws(statemap.getEV.bind(statemap, scorecard, upperScore), ArgumentError);
+        });
+
+        it('should throw error on invalid upperScore', function() {
+            var validatorMock = { };
+            StateMap = proxyquire('../statemap', { './validator': validatorMock });
+
+            var statemap = new StateMap();
+            var scorecard = new Array(15).fill(true);
+            var upperScore = 100;
+            var ev = 25.2;
+            statemap.addEV(scorecard, upperScore, ev);
+
+            validatorMock.isValidUpperScore = function(upperScore) { return false };
+
+            assert.throws(statemap.getEV.bind(statemap, scorecard, upperScore), ArgumentError);
+        });
     });
 
     describe('#addEV', function() {
@@ -58,6 +95,34 @@ describe('StateMap ', function() {
             assert.equal(statemap.getEV(scorecard, 63), ev);
             assert.isNull(statemap.getEV(scorecard, 62));
         });
+
+        it('should throw error on invalid scorecard', function() {
+            var validatorMock = {
+                isValidScorecard: function(scorecard) { return false }
+            };
+            StateMap = proxyquire('../statemap', { './validator': validatorMock });
+
+            var statemap = new StateMap();
+            var scorecard = new Array(15).fill(true);
+            var upperScore = 100;
+            var ev = 25.2;
+
+            assert.throws(statemap.addEV.bind(statemap, scorecard, upperScore, ev), ArgumentError);
+        });
+
+        it('should throw error on invalid upperScore', function() {
+            var validatorMock = {
+                isValidUpperScore: function(upperScore) { return false }
+            };
+            StateMap = proxyquire('../statemap', { './validator': validatorMock });
+
+            var statemap = new StateMap();
+            var scorecard = new Array(15).fill(true);
+            var upperScore = 100;
+            var ev = 25.2;
+
+            assert.throws(statemap.addEV.bind(statemap, scorecard, upperScore, ev), ArgumentError);
+        });
     });
 
     describe('#fromJSON', function() {
@@ -72,9 +137,11 @@ describe('StateMap ', function() {
                 }
             };
             var statemap = StateMap.fromJSON(json);
-            assert.equal(statemap.getEV([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],55),25.2);
-            assert.equal(statemap.getEV([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],53),26.78);
-            assert.equal(statemap.getEV([0,0,0,1,1,1,0,0,0,1,1,1,0,0,0],23),43.222);
+            var scorecard1 = new Array(15).fill(true);
+            var scorecard2 = [0,0,0,1,1,1,0,0,0,1,1,1,0,0,0].map(x => x ? true : false);
+            assert.equal(statemap.getEV(scorecard1,55),25.2);
+            assert.equal(statemap.getEV(scorecard1,53),26.78);
+            assert.equal(statemap.getEV(scorecard2,23),43.222);
         });
 
         it('should read JSON from toJSON()', function() {
@@ -106,9 +173,11 @@ describe('StateMap ', function() {
                 }
             };
             var statemap = new StateMap();
-            statemap.addEV([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 55, 25.2);
-            statemap.addEV([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 53, 26.78);
-            statemap.addEV([0,0,0,1,1,1,0,0,0,1,1,1,0,0,0], 23, 43.222);
+            var scorecard1 = new Array(15).fill(true);
+            var scorecard2 = [0,0,0,1,1,1,0,0,0,1,1,1,0,0,0].map(x => x ? true : false);
+            statemap.addEV(scorecard1, 55, 25.2);
+            statemap.addEV(scorecard1, 53, 26.78);
+            statemap.addEV(scorecard2   , 23, 43.222);
             assert.deepEqual(expected, statemap.toJSON());
         });
     });
@@ -117,9 +186,11 @@ describe('StateMap ', function() {
         it('should return the size of the map', function() {
             var statemap = new StateMap();
             assert.equal(statemap.size(), 0);
-            statemap.addEV([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 55, 25.2);
-            statemap.addEV([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 53, 26.78);
-            statemap.addEV([0,0,0,1,1,1,0,0,0,1,1,1,0,0,0], 23, 43.222);
+            var scorecard1 = new Array(15).fill(true);
+            var scorecard2 = [0,0,0,1,1,1,0,0,0,1,1,1,0,0,0].map(x => x ? true : false);
+            statemap.addEV(scorecard1, 55, 25.2);
+            statemap.addEV(scorecard1, 53, 26.78);
+            statemap.addEV(scorecard2, 23, 43.222);
             assert.equal(statemap.size(), 3);
         });
     });

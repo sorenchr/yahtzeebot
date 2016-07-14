@@ -1,6 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
-var proxyquire = require('proxyquire');
+var proxyquire = require('proxyquire').noPreserveCache();
 var ArgumentError = require('../argumenterror');
 
 describe('probability ', function() {

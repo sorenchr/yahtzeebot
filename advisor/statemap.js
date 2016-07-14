@@ -1,4 +1,6 @@
 var _ = require('lodash');
+var validator = require('./validator');
+var ArgumentError = require('./argumenterror');
 
 var StateMap = function() {
     this.map = {};
@@ -9,6 +11,10 @@ function formatScorecard(scorecard) {
 }
 
 StateMap.prototype.getEV = function(scorecard, upperScore) {
+    // Validate inputs
+    if (!validator.isValidScorecard(scorecard)) throw new ArgumentError('Invalid scorecard: ' + scorecard);
+    if (!validator.isValidUpperScore(upperScore)) throw new ArgumentError('Invalid upper score: ' + upperScore);
+    
     scorecard = formatScorecard(scorecard);
     if (upperScore > 63) upperScore = 63;
     if (!(scorecard in this.map) || !(upperScore in this.map[scorecard])) return null;
@@ -16,6 +22,10 @@ StateMap.prototype.getEV = function(scorecard, upperScore) {
 };
 
 StateMap.prototype.addEV = function (scorecard, upperScore, ev) {
+    // Validate inputs
+    if (!validator.isValidScorecard(scorecard)) throw new ArgumentError('Invalid scorecard: ' + scorecard);
+    if (!validator.isValidUpperScore(upperScore)) throw new ArgumentError('Invalid upper score: ' + upperScore);
+    
     scorecard = formatScorecard(scorecard);
     if (upperScore > 63) upperScore = 63;
     if (!(scorecard in this.map)) this.map[scorecard] = {};
@@ -42,7 +52,9 @@ StateMap.fromJSON = function(json) {
     for (var scorecard in json) {
         var scorecardArray = scorecard.split('').map(x => x == 1 ? true : false);
         for (var upperScore in json[scorecard]) {
-            map.addEV(scorecardArray, upperScore, json[scorecard][upperScore]);
+            upperScore = parseInt(upperScore);
+            var ev = parseFloat(json[scorecard][upperScore]);
+            map.addEV(scorecardArray, upperScore, ev);
         }
     }
 

@@ -131,4 +131,29 @@ describe('validator', function() {
             assert.isTrue(validator.isValidScorecard(scorecard));
         });
     });
+
+    describe('#isValidUpperScore', function() {
+        it('should return false on non-integer input', function() {
+            assert.isFalse(validator.isValidUpperScore('a'));
+            assert.isFalse(validator.isValidUpperScore('22'));
+            assert.isFalse(validator.isValidUpperScore(2.2));
+            assert.isFalse(validator.isValidUpperScore({}));
+            assert.isFalse(validator.isValidUpperScore(null));
+            assert.isFalse(validator.isValidUpperScore(true));
+            assert.isFalse(validator.isValidUpperScore(undefined));
+            assert.isFalse(validator.isValidUpperScore(NaN));
+            assert.isFalse(validator.isValidUpperScore(new Date()));
+            assert.isFalse(validator.isValidUpperScore([2]));
+        });
+
+        it('should return false on negative integers', function() {
+            assert.isFalse(validator.isValidUpperScore(-1));
+        });
+
+        it('should return true on positive integers', function() {
+            assert.isTrue(validator.isValidUpperScore(0));
+            assert.isTrue(validator.isValidUpperScore(5));
+            assert.isTrue(validator.isValidUpperScore(50));
+        });
+    });
 });
