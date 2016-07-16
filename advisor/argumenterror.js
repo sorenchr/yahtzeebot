@@ -1,10 +1,11 @@
-var ArgumentError = function(message) {
+var util = require('util');
+
+function ArgumentError(message) {
     this.name = 'ArgumentError';
     this.message = message;
-};
+    Error.captureStackTrace(this, ArgumentError);
+}
 
-ArgumentError.prototype.toString = function() {
-    return this.name + ': ' + this.message;
-};
+util.inherits(ArgumentError, Error);
 
 module.exports = ArgumentError;
