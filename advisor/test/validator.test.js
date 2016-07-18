@@ -156,4 +156,30 @@ describe('validator', function() {
             assert.isTrue(validator.isValidUpperScore(50));
         });
     });
+
+    describe('#isValidDie', function() {
+        it('should return false on non-integer input', function() {
+            assert.isFalse(validator.isValidDie('1'));
+            assert.isFalse(validator.isValidDie('[2]'));
+            assert.isFalse(validator.isValidDie(2.2));
+            assert.isFalse(validator.isValidDie({}));
+            assert.isFalse(validator.isValidDie(null));
+            assert.isFalse(validator.isValidDie(true));
+            assert.isFalse(validator.isValidDie(undefined));
+            assert.isFalse(validator.isValidDie(NaN));
+            assert.isFalse(validator.isValidDie(new Date()));
+            assert.isFalse(validator.isValidDie([2]));
+        });
+
+        it('should return false on integers outside [1,6]', function() {
+            assert.isFalse(validator.isValidDie(0));
+            assert.isFalse(validator.isValidDie(7));
+        });
+
+        it('should return true on integers in [1,6]', function() {
+            for (var i = 1; i <= 6; i++) {
+                assert.isTrue(validator.isValidDie(i));
+            }
+        });
+    });
 });

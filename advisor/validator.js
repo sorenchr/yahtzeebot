@@ -1,5 +1,11 @@
 var validator = module.exports;
 
+validator.isValidDie = function(die) {
+    if (!Number.isInteger(die)) return false;
+    if (die < 1 || die > 6) return false;
+    return true;
+};
+
 validator.isValidDice = function(dice) {
     if (!Array.isArray(dice)) return false;
     if (!dice.every(x => Number.isInteger(x))) return false;
@@ -28,6 +34,6 @@ validator.isValidScorecard = function(scorecard) {
 
 validator.isValidUpperScore = function(upperScore) {
     if (!Number.isInteger(upperScore)) return false;
-    if (upperScore < 0) return false;
+    if (upperScore < 0) return false;   
     return true;
 };
