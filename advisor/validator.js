@@ -74,7 +74,7 @@ validator.isValidUpperScore = function(upperScore) {
  * @returns {boolean} True if the EV is valid, false otherwise.
  */
 validator.isValidEV = function(ev) {
-    if (typeof ev !== 'number' && typeof ev !== 'float') return false;
+    if (typeof ev !== 'number') return false;
     if (isNaN(ev)) return false;
     if (ev < 0) return false;
     if (ev > 404) return false;
