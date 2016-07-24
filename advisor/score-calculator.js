@@ -36,8 +36,6 @@ sc.getCategoryScore = function(category, roll) {
     } else if (category == 14) {
         return getYahtzeeScore(roll);
     }
-
-    throw "UnknownCategoryError";
 };
 
 /**
