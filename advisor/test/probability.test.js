@@ -131,7 +131,7 @@ describe('probability ', function() {
             assert.equal(prob.getDiceProbability(roll), 0.16666666666666666);
         });
 
-        it('should throw error on invalid input', function() {
+        it('should throw ArgumentError on invalid input', function() {
             var validatorMock = { isValidDice: function(dice) { return false } };
             var prob = proxyquire('../probability', { './validator': validatorMock });
             assert.throws(prob.getDiceProbability.bind(prob, [1,2]), ArgumentError);
