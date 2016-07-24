@@ -182,4 +182,54 @@ describe('validator', function() {
             }
         });
     });
+
+    describe('#isValidEV', function() {
+        it('should return false on non-float or non-integer input', function() {
+            assert.isFalse(validator.isValidEV('1'));
+            assert.isFalse(validator.isValidEV('1.2'));
+            assert.isFalse(validator.isValidEV({}));
+            assert.isFalse(validator.isValidEV(null));
+            assert.isFalse(validator.isValidEV(true));
+            assert.isFalse(validator.isValidEV(undefined));
+            assert.isFalse(validator.isValidEV(NaN));
+            assert.isFalse(validator.isValidEV(new Date()));
+            assert.isFalse(validator.isValidEV([1]));
+            assert.isFalse(validator.isValidEV([1.2]));
+            assert.isFalse(validator.isValidEV(Number.POSITIVE_INFINITY));
+        });
+
+        it('should return false on negative values', function() {
+            assert.isFalse(validator.isValidEV(-1));
+            assert.isFalse(validator.isValidEV(-1.2));
+        });
+
+        it('should return false on values above maximum score', function() {
+            var sc = require('../score-calculator');
+
+            var maxScore = sc.getCategoryScore(0, [1,1,1,1,1]);
+            maxScore += sc.getCategoryScore(1, [2,2,2,2,2]);
+            maxScore += sc.getCategoryScore(2, [3,3,3,3,3]);
+            maxScore += sc.getCategoryScore(3, [4,4,4,4,4]);
+            maxScore += sc.getCategoryScore(4, [5,5,5,5,5]);
+            maxScore += sc.getCategoryScore(5, [6,6,6,6,6]);
+            maxScore += sc.getCategoryScore(6, [6,6,1,1,1]);
+            maxScore += sc.getCategoryScore(7, [6,6,5,5,1]);
+            maxScore += sc.getCategoryScore(8, [6,6,6,1,1]);
+            maxScore += sc.getCategoryScore(9, [6,6,6,6,1]);
+            maxScore += sc.getCategoryScore(10, [1,2,3,4,5]);
+            maxScore += sc.getCategoryScore(11, [2,3,4,5,6]);
+            maxScore += sc.getCategoryScore(12, [6,6,6,5,5]);
+            maxScore += sc.getCategoryScore(13, [6,6,6,6,6]);
+            maxScore += sc.getCategoryScore(14, [6,6,6,6,6]);
+            maxScore += 50; // Upper score bonus
+
+            assert.isTrue(validator.isValidEV(maxScore));
+            assert.isFalse(validator.isValidEV(maxScore + 0.1));
+        });
+
+        it('should return true on positive numbers', function() {
+            assert.isTrue(validator.isValidEV(10));
+            assert.isTrue(validator.isValidEV(30.3));
+        });
+    })
 });

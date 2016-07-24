@@ -67,3 +67,16 @@ validator.isValidUpperScore = function(upperScore) {
     if (upperScore < 0) return false;   
     return true;
 };
+
+/**
+ * Checks if the given EV is a positive number between 0 and 63.
+ * @param ev The EV to check.
+ * @returns {boolean} True if the EV is valid, false otherwise.
+ */
+validator.isValidEV = function(ev) {
+    if (typeof ev !== 'number' && typeof ev !== 'float') return false;
+    if (isNaN(ev)) return false;
+    if (ev < 0) return false;
+    if (ev > 404) return false;
+    return true;
+};
