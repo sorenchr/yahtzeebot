@@ -231,5 +231,31 @@ describe('validator', function() {
             assert.isTrue(validator.isValidEV(10));
             assert.isTrue(validator.isValidEV(30.3));
         });
-    })
+    });
+
+    describe('#isValidRollsLeft', function() {
+        it('should return false on non-integer input', function() {
+            assert.isFalse(validator.isValidRollsLeft('1'));
+            assert.isFalse(validator.isValidRollsLeft('[2]'));
+            assert.isFalse(validator.isValidRollsLeft(2.2));
+            assert.isFalse(validator.isValidRollsLeft({}));
+            assert.isFalse(validator.isValidRollsLeft(null));
+            assert.isFalse(validator.isValidRollsLeft(true));
+            assert.isFalse(validator.isValidRollsLeft(undefined));
+            assert.isFalse(validator.isValidRollsLeft(NaN));
+            assert.isFalse(validator.isValidRollsLeft(new Date()));
+            assert.isFalse(validator.isValidRollsLeft([2]));
+        });
+
+        it('should return false on integers outside [1,2]', function() {
+            assert.isFalse(validator.isValidRollsLeft(0));
+            assert.isFalse(validator.isValidRollsLeft(3));
+        });
+
+        it('should return true on integers in [1,2]', function() {
+            for (var i = 1; i <= 2; i++) {
+                assert.isTrue(validator.isValidRollsLeft(i));
+            }
+        });
+    });
 });

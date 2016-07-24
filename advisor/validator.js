@@ -80,3 +80,14 @@ validator.isValidEV = function(ev) {
     if (ev > 404) return false;
     return true;
 };
+
+/**
+ * Checks if the given rolls left is a positive integer between 1 and 2.
+ * @param rollsLeft The rolls left to check.
+ * @returns {boolean} True if the rolls left is valid, false otherwise.
+ */
+validator.isValidRollsLeft = function(rollsLeft) {
+    if (!Number.isInteger(rollsLeft)) return false;
+    if (rollsLeft !== 1 && rollsLeft !== 2) return false;
+    return true;
+};
