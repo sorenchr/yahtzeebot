@@ -235,5 +235,40 @@ describe('advisor', function() {
             returnEV = 61.1;
             assert.equal(advisorProxy.getBestCategory(scorecard, upperScore, dice), 14);
         });
+
+        it('should trigger the upper section bonus at an upper score of 63 or higher', function() {
+            var stateMapMock = {
+                getEV: function(scorecard, upperScore) { return 0; }
+            };
+
+            var returnVal = 2;
+            var scoreCalcMock = {
+                getCategoryScore: function(category, dice) {
+                    if (category === 5) return returnVal;
+                    if (category === 14) return 50;
+                    return 0;
+                }
+            };
+
+            var advisorProxy = proxyquire('../advisor', { './score-calculator': scoreCalcMock });
+            advisorProxy.init({ 'stateMap': stateMapMock });
+
+            var scorecard = '000000000000000'.split('').map(x => x === '1');
+            var upperScore = 60;
+            var dice = [6,6,6,6,6];
+
+            // The advisor should suggest scoring the 14th category because the
+            // upper section should not be triggered
+            assert.equal(advisorProxy.getBestCategory(scorecard, upperScore, dice), 14);
+
+            // The advisor should suggest scoring the 6th category because the
+            // upper section bonus should now be triggered at 63
+            returnVal = 3;
+            assert.equal(advisorProxy.getBestCategory(scorecard, upperScore, dice), 5);
+
+            // The advisor should still suggest scoring the 6th category
+            returnVal = 300;
+            assert.equal(advisorProxy.getBestCategory(scorecard, upperScore, dice), 5);
+        });
     });
 });
