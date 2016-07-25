@@ -2,11 +2,56 @@ var chai = require('chai');
 var assert = chai.assert;
 var proxyquire = require('proxyquire').noPreserveCache();
 var ArgumentError = require('../argumenterror');
+var clearRequire = require('clear-require');
+var sinon = require('sinon');
+var StateMap = require('../statemap');
 
 describe('advisor', function() {
     describe('#init', function() {
+        var advisor;
+
+        beforeEach(function() {
+            advisor = require('../advisor');
+        });
+
+        it('should throw ArgumentError if no settings are provided', function() {
+            assert.throws(advisor.init.bind(advisor), ArgumentError);
+        });
+
+        it('should throw ArgumentError if no StateMap is present in the settings', function() {
+            assert.throws(advisor.init.bind(advisor, { someOther: 'settings' }), ArgumentError);
+        });
+
+        it('should throw ArgumentError if the settings is not a simple object', function() {
+            assert.throws(advisor.init.bind(advisor, 1), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, 'a'), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, 2.2), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, null), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, true), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, undefined), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, NaN), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, [2]), ArgumentError);
+        });
+
+        it('should throw ArgumentError if the state map is not a StateMap instance', function() {
+            assert.throws(advisor.init.bind(advisor, { stateMap: 1 }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: 'a' }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: 2.2 }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: {} }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: null }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: true }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: undefined }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: NaN }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: new Date() }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: [2] }), ArgumentError);
+        });
+
         it('should use the StateMap provided in the settings', function() {
 
+        });
+
+        afterEach(function() {
+            clearRequire('../advisor');
         });
     });
 
@@ -88,12 +133,11 @@ describe('advisor', function() {
         it('should choose the category with the best EV', function() {
             var scorecardToMatch = '000000000000001';
 
-            var stateMapMock = {
-                getEV: function(scorecard, upperScore) {
+            var stateMapMock = sinon.createStubInstance(StateMap);
+            stateMapMock.getEV = function(scorecard, upperScore) {
                     var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
                     if (scorecardString === scorecardToMatch) return 2.0;
                     return 1.0;
-                }
             };
 
             var scoreCalcMock = {
@@ -116,9 +160,8 @@ describe('advisor', function() {
         });
 
         it('should choose the category with the best score', function() {
-            var stateMapMock = {
-                getEV: function(scorecard, upperScore) { return 0; }
-            };
+            var stateMapMock = sinon.createStubInstance(StateMap);
+            stateMapMock.getEV = function(scorecard, upperScore) { return 0; }
 
             var bestCategory = 5;
             var scoreCalcMock = {
@@ -144,13 +187,12 @@ describe('advisor', function() {
         });
 
         it('should choose the category with the best EV and score', function() {
-            var stateMapMock = {
-                getEV: function(scorecard, upperScore) {
+            var stateMapMock = sinon.createStubInstance(StateMap);
+            stateMapMock.getEV = function(scorecard, upperScore) {
                     var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
                     if (scorecardString === '010000000000000') return 40.0;
                     if (scorecardString === '001000000000000') return 20.0;
                     return 0.0;
-                }
             };
 
             var scoreCalcMock = {
@@ -175,13 +217,12 @@ describe('advisor', function() {
         });
 
         it('should skip marked categories', function() {
-            var stateMapMock = {
-                getEV: function(scorecard, upperScore) {
+            var stateMapMock = sinon.createStubInstance(StateMap);
+            stateMapMock.getEV = function(scorecard, upperScore) {
                     var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
                     if (scorecardString === '000000000000001') return 5.0;
                     if (scorecardString === '000000010000001') return 2.0;
                     return 1.0;
-                }
             };
 
             var scoreCalcMock = {
@@ -204,12 +245,11 @@ describe('advisor', function() {
         it('should account for the upper section bonus of 50', function() {
             var returnEV = 60.9;
 
-            var stateMapMock = {
-                getEV: function(scorecard, upperScore) {
+            var stateMapMock = sinon.createStubInstance(StateMap);
+            stateMapMock.getEV = function(scorecard, upperScore) {
                     var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
                     if (scorecardString === '111110000000001') return returnEV;
                     return 1.0;
-                }
             };
 
             var scoreCalcMock = {
@@ -237,9 +277,8 @@ describe('advisor', function() {
         });
 
         it('should trigger the upper section bonus at an upper score of 63 or higher', function() {
-            var stateMapMock = {
-                getEV: function(scorecard, upperScore) { return 0; }
-            };
+            var stateMapMock = sinon.createStubInstance(StateMap);
+            stateMapMock.getEV = function(scorecard, upperScore) { return 0; }
 
             var returnVal = 2;
             var scoreCalcMock = {

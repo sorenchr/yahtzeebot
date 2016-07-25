@@ -2,6 +2,7 @@ var validator = require('./validator');
 var ArgumentError = require('./argumenterror');
 var _ = require('lodash');
 var scorecalc = require('./score-calculator');
+var StateMap = require('./statemap');
 
 var advisor = module.exports;
 
@@ -10,11 +11,20 @@ var stateMap;
 
 /**
  * Initialize the module.
- * @param config An object containing settings.
+ * @param settings An object containing settings.
  */
-advisor.init = function(config) {
-    stateMap = config['stateMap'];
+advisor.init = function(settings) {
+    if (!isValidSettings(settings)) throw new ArgumentError('Invalid settings: ' + settings);
+    stateMap = settings['stateMap'];
 };
+
+function isValidSettings(settings) {
+    if (settings !== Object(settings)) return false;
+    if (Array.isArray(settings)) return false;
+    if (!('stateMap' in settings)) return false;
+    if (!(settings['stateMap'] instanceof StateMap)) return false;
+    return true;
+}
 
 /**
  * Returns the best keepers to choose from the given game state.
