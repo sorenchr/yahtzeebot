@@ -47,7 +47,32 @@ describe('advisor', function() {
         });
 
         it('should use the StateMap provided in the settings', function() {
+            var scorecardToMatch = '000000000000001';
 
+            var stateMapMock = sinon.createStubInstance(StateMap);
+            stateMapMock.getEV = function(scorecard, upperScore) {
+                var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
+                if (scorecardString === scorecardToMatch) return 2.0;
+                return 1.0;
+            };
+
+            var scoreCalcMock = {
+                getCategoryScore: function(category, dice) { return 0; }
+            };
+
+            var advisorProxy = proxyquire('../advisor', { './score-calculator': scoreCalcMock });
+            advisorProxy.init({ 'stateMap': stateMapMock });
+
+            var scorecard = new Array(15).fill(false);
+            var upperScore = 25;
+            var dice = [1,2,3,4,5];
+
+            // The advisor should suggest scoring the last category
+            assert.equal(advisorProxy.getBestCategory(scorecard, upperScore, dice), 14);
+
+            // The advisor should suggest scoring the first category
+            scorecardToMatch = '100000000000000';
+            assert.equal(advisorProxy.getBestCategory(scorecard, upperScore, dice), 0);
         });
 
         afterEach(function() {
