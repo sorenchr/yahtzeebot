@@ -3,6 +3,7 @@ var simulator = require('./simulator');
 var fs = require('fs');
 var ProgressBar = require('progress');
 var _ = require('lodash');
+var prettyMs = require('pretty-ms');
 
 // Setup command-line arguments
 commander
@@ -26,11 +27,17 @@ if (commander.games < 1) {
 var pbar = new ProgressBar('[:percent]:bar[100%] :etas rem.', { total: commander.games });
 
 // Run the specified number of games and get the scores
-gameScores = [];
+var gameScores = [];
+var gameRunningTimes = [];
 for (var i = 1; i <= commander.games; i++) {
+    var startTime = Date.now();
     var score = simulator.simulate();
+    var endTime = Date.now();
+
     pbar.tick();
+
     gameScores.push(score);
+    gameRunningTimes.push(endTime - startTime);
 }
 
 // Save result to disk if the user has requested it
@@ -51,4 +58,8 @@ if (commander.output) {
     fileStream.end();
 }
 
-console.log("Done. Simulated " + gameScores.length + " games with an average score of: " + _.mean(gameScores));
+console.log('Simulated ' + commander.games + ' games successfully');
+console.log('Average score: ' + _.mean(gameScores));
+console.log('Average time pr. game simulation: ' + prettyMs(_.mean(gameRunningTimes)));
+console.log('Total simulation time: ' + prettyMs(_.sum(gameRunningTimes)));
+if(commander.output) console.log('Results saved to: ' + commander.output);
