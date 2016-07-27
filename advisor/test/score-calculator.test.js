@@ -210,8 +210,8 @@ describe('score-calculator', function() {
 
         it('should throw error on invalid category', function() {
             var validatorMock = {
-                isValidRoll: function(roll) { return true },
-                isValidCategory: function(category) { return false }
+                isValidRoll: function(roll) { return true; },
+                isValidCategory: function(category) { return false; }
             };
             var proxyScorecalc = proxyquire('../score-calculator', { './validator': validatorMock });
             assert.throws(proxyScorecalc.getCategoryScore.bind(proxyScorecalc, 0, [1,2,3,4,5]), ArgumentError);
@@ -219,8 +219,8 @@ describe('score-calculator', function() {
 
         it('should throw error on invalid roll', function() {
             var validatorMock = {
-                isValidRoll: function(roll) { return false },
-                isValidCategory: function(category) { return true }
+                isValidRoll: function(roll) { return false; },
+                isValidCategory: function(category) { return true; }
             };
             var proxyScorecalc = proxyquire('../score-calculator', { './validator': validatorMock });
             assert.throws(proxyScorecalc.getCategoryScore.bind(proxyScorecalc, 0, [1,2,3,4,5]), ArgumentError);
