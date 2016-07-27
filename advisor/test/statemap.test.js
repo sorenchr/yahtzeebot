@@ -50,11 +50,13 @@ describe('StateMap ', function() {
 
             statemap.addEV(scorecard, upperScore, ev);
 
+            assert.equal(statemap.size(), 1); // Ensure that only one entry exists in the map
             assert.equal(statemap.getEV(scorecard, 63), ev);
             assert.isNull(statemap.getEV(scorecard, 62));
         });
 
         it('should throw error on invalid scorecard', function() {
+            // Start with an empty mock that actually checks isValidScorecard
             var validatorMock = { };
             StateMap = proxyquire('../statemap', { './validator': validatorMock });
 
@@ -65,12 +67,14 @@ describe('StateMap ', function() {
 
             statemap.addEV(scorecard, upperScore, ev);
 
+            // Overwrite the isValidScorecard method of the mock
             validatorMock.isValidScorecard = function(scorecard) { return false };
 
             assert.throws(statemap.getEV.bind(statemap, scorecard, upperScore), ArgumentError);
         });
 
         it('should throw error on invalid upperScore', function() {
+            // Start with an empty mock that actually checks isValidScorecard
             var validatorMock = { };
             StateMap = proxyquire('../statemap', { './validator': validatorMock });
 
@@ -81,6 +85,7 @@ describe('StateMap ', function() {
 
             statemap.addEV(scorecard, upperScore, ev);
 
+            // Overwrite the isValidScorecard method of the mock
             validatorMock.isValidUpperScore = function(upperScore) { return false };
 
             assert.throws(statemap.getEV.bind(statemap, scorecard, upperScore), ArgumentError);
@@ -110,14 +115,13 @@ describe('StateMap ', function() {
 
             statemap.addEV(scorecard, upperScore, ev);
 
+            assert.equal(statemap.size(), 1); // Ensure that only one entry exists in the map
             assert.equal(statemap.getEV(scorecard, 63), ev);
             assert.isNull(statemap.getEV(scorecard, 62));
         });
 
         it('should throw error on invalid scorecard', function() {
-            var validatorMock = {
-                isValidScorecard: function(scorecard) { return false }
-            };
+            var validatorMock = { isValidScorecard: function(scorecard) { return false } };
             StateMap = proxyquire('../statemap', { './validator': validatorMock });
 
             var statemap = new StateMap();
@@ -129,9 +133,7 @@ describe('StateMap ', function() {
         });
 
         it('should throw error on invalid upperScore', function() {
-            var validatorMock = {
-                isValidUpperScore: function(upperScore) { return false }
-            };
+            var validatorMock = { isValidUpperScore: function(upperScore) { return false } };
             StateMap = proxyquire('../statemap', { './validator': validatorMock });
 
             var statemap = new StateMap();
@@ -143,9 +145,7 @@ describe('StateMap ', function() {
         });
 
         it('should throw error on invalid EV', function() {
-            var validatorMock = {
-                isValidEV: function(ev) { return false }
-            };
+            var validatorMock = { isValidEV: function(ev) { return false } };
             StateMap = proxyquire('../statemap', { './validator': validatorMock });
 
             var statemap = new StateMap();
@@ -169,6 +169,7 @@ describe('StateMap ', function() {
             var scorecard1 = new Array(15).fill(true);
             var scorecard2 = [0,0,0,1,1,1,0,0,0,1,1,1,0,0,0].map(x => x ? true : false);
 
+            assert.equal(3, statemap.size());
             assert.equal(statemap.getEV(scorecard1,55),25.2);
             assert.equal(statemap.getEV(scorecard1,53),26.78);
             assert.equal(statemap.getEV(scorecard2,23),43.222);
@@ -243,6 +244,7 @@ describe('StateMap ', function() {
             var json = statemap.toJSON();
             var parsed = StateMap.fromJSON(json);
 
+            assert.equal(parsed.size(), 4);
             assert.equal(parsed.getEV(scorecard1, 1), 55.2);
             assert.equal(parsed.getEV(scorecard1, 2), 230.2);
             assert.equal(parsed.getEV(scorecard2, 22), 20.2);

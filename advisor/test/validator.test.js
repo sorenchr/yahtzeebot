@@ -206,6 +206,7 @@ describe('validator', function() {
         it('should return false on values above maximum score', function() {
             var sc = require('../score-calculator');
 
+            // Calculate the maximum possible score in the game
             var maxScore = sc.getCategoryScore(0, [1,1,1,1,1]);
             maxScore += sc.getCategoryScore(1, [2,2,2,2,2]);
             maxScore += sc.getCategoryScore(2, [3,3,3,3,3]);
@@ -223,6 +224,7 @@ describe('validator', function() {
             maxScore += sc.getCategoryScore(14, [6,6,6,6,6]);
             maxScore += 50; // Upper score bonus
 
+            // Verify that we can't go .1 over the max score limit
             assert.isTrue(validator.isValidEV(maxScore));
             assert.isFalse(validator.isValidEV(maxScore + 0.1));
         });
