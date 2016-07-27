@@ -1,4 +1,6 @@
+var StateMap = require('./statemap');
 var advisor = require('./advisor');
+var jsonfile = require('jsonfile');
 var scorecalc = require('./score-calculator');
 
 var simulator = module.exports;
@@ -10,7 +12,7 @@ var simulator = module.exports;
  */
 simulator.simulate = function() {
     // Initialize game state
-    var scorecard = new Array(15).fill(0), totalScore = 0, upperScore = 0;
+    var scorecard = new Array(15).fill(false), totalScore = 0, upperScore = 0;
 
     // Loop over all the rounds in the game
     for (var i = 0; i < 15; i++) {
@@ -33,7 +35,7 @@ simulator.simulate = function() {
         var category = advisor.getBestCategory(scorecard, upperScore, dice);
 
         // Mark the scorecard
-        scorecard[category] = 1;
+        scorecard[category] = true;
 
         // Get the score for the category
         var score = scorecalc.getCategoryScore(category, dice);
