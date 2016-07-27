@@ -13,35 +13,55 @@ commander
     .parse(process.argv);
 
 // Verify arguments
-if (!commander.games) {
-    console.log("Error. Please specify the number of games to simulate.");
-    process.exit(1);
-}
-
-if (commander.games < 1) {
-    console.log("Error. Please enter a positive number of games to simulate.");
-    process.exit(1);
-}
+if (!commander.games) writeAndExit('Please specify the number of games to simulate');
+if (commander.games < 1) writeAndExit('Number of games must be 1 or greater');
 
 // Setup the ProgressBar
 var pbar = new ProgressBar('[:percent]:bar[100%] :etas rem.', { total: commander.games });
 
-// Run the specified number of games and get the scores
-var gameScores = [];
-var gameRunningTimes = [];
-for (var i = 1; i <= commander.games; i++) {
+// Run the specified number of games and get the output
+var outputs = _.range(commander.games).map(x => simulateGame());
+
+// Save result to disk if the user has requested it
+if (commander.output) saveOutputToDisk(outputs);
+
+// Notify the user that the simulation completed
+console.log('Simulated ' + commander.games + ' games successfully');
+console.log('Average score: ' + _.meanBy(outputs, (o) => o.score));
+console.log('Average time pr. game simulation: ' + prettyMs(_.meanBy(outputs, (o) => o.runTime)));
+console.log('Total simulation time: ' + prettyMs(_.sumBy(outputs, (o) => o.runTime)));
+if(commander.output) console.log('Results saved to: ' + commander.output);
+
+/**
+ * Writes a message to the console and exists the process.
+ * @param msg The message to write.
+ */
+function writeAndExit(msg) {
+    console.log(msg);
+    process.exit(1);
+}
+
+/**
+ * Simulate a single game and return the results (score and runtime in milliseconds).
+ * @returns {{score: number, runTime: number}}
+ */
+function simulateGame() {
+    // Simulate the game and record the delta timespan
     var startTime = Date.now();
     var score = simulator.simulate();
     var endTime = Date.now();
 
+    // Tick the progress bar
     pbar.tick();
 
-    gameScores.push(score);
-    gameRunningTimes.push(endTime - startTime);
+    return { score: score, runTime: endTime - startTime };
 }
 
-// Save result to disk if the user has requested it
-if (commander.output) {
+/**
+ * Saves a list of output objects to disk.
+ * @param output The list of output objects to save.
+ */
+function saveOutputToDisk(output) {
     var fileStream = fs.createWriteStream(commander.output);
 
     fileStream.on('error', function(err) {
@@ -50,16 +70,12 @@ if (commander.output) {
 
     // Write header and each entry in the game scores array
     fileStream.write("Game,Score\n");
-    for (var i = 1; i <= gameScores.length; i++) {
-        fileStream.write(i + "," + gameScores[i-1]);
-        if (i < gameScores.length) fileStream.write('\n');
+    for (var i = 1; i <= output.length; i++) {
+        fileStream.write(i + "," + output[i-1].score);
+        if (i < output.length) fileStream.write('\n');
     }
 
     fileStream.end();
 }
 
-console.log('Simulated ' + commander.games + ' games successfully');
-console.log('Average score: ' + _.mean(gameScores));
-console.log('Average time pr. game simulation: ' + prettyMs(_.mean(gameRunningTimes)));
-console.log('Total simulation time: ' + prettyMs(_.sum(gameRunningTimes)));
-if(commander.output) console.log('Results saved to: ' + commander.output);
+

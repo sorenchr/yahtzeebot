@@ -1,6 +1,4 @@
-var StateMap = require('./statemap');
 var advisor = require('./advisor');
-var jsonfile = require('jsonfile');
 var scorecalc = require('./score-calculator');
 
 var simulator = module.exports;
