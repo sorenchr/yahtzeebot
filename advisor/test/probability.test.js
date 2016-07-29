@@ -1,123 +1,73 @@
 var chai = require('chai');
 var assert = chai.assert;
-var proxyquire = require('proxyquire').noPreserveCache();
-var ArgumentError = require('../argumenterror');
 var prob = require('../probability');
+var gens = require('../generators');
+var _ = require('lodash');
+
+// Generate all dices possible (ranging from 0 to 5 dice)
+var allDice = {};
+for (var i = 0; i <= 5; i++) {
+    allDice[i] = generateDice(i);
+}
 
 describe('probability ', function() {
     describe('#getDiceProbability', function() {
-        // Ones
-        it('should return 0.0001286008230452675 for [1,1,1,1,1]', function() {
-            var roll = [1,1,1,1,1];
-            assert.equal(prob.getDiceProbability(roll), 0.0001286008230452675);
-        });
+        it('should return the correct probability for all dice', function() {
+            this.timeout(0); // Kill the timeout for this test
 
-        // One pair
-        it('should return 0.007716049382716049 for [6,6,3,2,4]', function() {
-            var roll = [6,6,3,2,4];
-            assert.equal(prob.getDiceProbability(roll), 0.007716049382716049);
-        });
-
-        // Two pairs
-        it('should return 0.0038580246913580245 for [6,6,3,3,4]', function() {
-            var roll = [6,6,3,3,4];
-            assert.equal(prob.getDiceProbability(roll), 0.0038580246913580245);
-        });
-
-        // Three of a kind
-        it('should return 0.00257201646090535 for [6,6,3,6,4]', function() {
-            var roll = [6,6,3,6,4];
-            assert.equal(prob.getDiceProbability(roll), 0.00257201646090535);
-        });
-
-        // Four of a kind
-        it('should return 0.0006430041152263374 for [1,1,1,1,4]', function() {
-            var roll = [1,1,1,1,4];
-            assert.equal(prob.getDiceProbability(roll), 0.0006430041152263374);
-        });
-        
-        // Small straight
-        it('should return 0.015432098765432098 for [1,2,3,4,5]', function() {
-            var roll = [1,2,3,4,5];
-            assert.equal(prob.getDiceProbability(roll), 0.015432098765432098);
-        });
-
-        // Full house
-        it('should return 0.001286008230452675 for [6,6,5,5,5]', function() {
-            var roll = [6,6,5,5,5];
-            assert.equal(prob.getDiceProbability(roll), 0.001286008230452675);
-        });
-
-        // Chance (random dice)
-        it('should return 0.007716049382716049 for [1,3,4,1,6]', function() {
-            var roll = [1,3,4,1,6];
-            assert.equal(prob.getDiceProbability(roll), 0.007716049382716049);
-        });
-
-        // Yahtzee
-        it('should return 0.0001286008230452675 for [4,4,4,4,4]', function() {
-            var roll = [4,4,4,4,4];
-            assert.equal(prob.getDiceProbability(roll), 0.0001286008230452675);
-        });
-
-        // 4 dice (unique dice)
-        it('should return 0.018518518518518517 for [1,2,3,4]', function() {
-            var roll = [1,2,3,4];
-            assert.equal(prob.getDiceProbability(roll), 0.018518518518518517);
-        });
-
-        // 4 dice (some of the same)
-        it('should return 0.009259259259259259 for [2,2,3,4]', function() {
-            var roll = [2,2,3,4];
-            assert.equal(prob.getDiceProbability(roll), 0.009259259259259259);
-        });
-
-        // 4 dice (all the same)
-        it('should return 0.0007716049382716049 for [4,4,4,4]', function() {
-            var roll = [4,4,4,4];
-            assert.equal(prob.getDiceProbability(roll), 0.0007716049382716049);
-        });
-        
-        // 3 dice (unique dice)
-        it('should return 0.027777777777777776 for [1,2,3]', function() {
-            var roll = [1,2,3];
-            assert.equal(prob.getDiceProbability(roll), 0.027777777777777776);
-        });
-        
-        // 3 dice (some of the same)
-        it('should return 0.027777777777777776 for [3,2,3]', function() {
-            var roll = [1,2,3];
-            assert.equal(prob.getDiceProbability(roll), 0.027777777777777776);
-        });
-        
-        // 3 dice (all the same)
-        it('should return 0.004629629629629629 for [3,3,3]', function() {
-            var roll = [3,3,3];
-            assert.equal(prob.getDiceProbability(roll), 0.004629629629629629);
-        });
-        
-        // 2 dice (unique dice)
-        it('should return 0.05555555555555555 for [1,2]', function() {
-            var roll = [1,2];
-            assert.equal(prob.getDiceProbability(roll), 0.05555555555555555);
-        });
-        
-        // 2 dice (all the same)
-        it('should return 0.027777777777777776 for [2,2]', function() {
-            var roll = [2,2];
-            assert.equal(prob.getDiceProbability(roll), 0.027777777777777776);
-        });
-        
-        // 1 die
-        it('should return 0.16666666666666666 for [1]', function() {
-            var roll = [1];
-            assert.equal(prob.getDiceProbability(roll), 0.16666666666666666);
-        });
-
-        it('should throw ArgumentError on invalid input', function() {
-            var validatorMock = { isValidDice: function(dice) { return false } };
-            var probProxy = proxyquire('../probability', { './validator': validatorMock });
-            assert.throws(probProxy.getDiceProbability.bind(probProxy, [1,2]), ArgumentError);
+            var allUniqueDice = gens.generateDiceUpTo(5);
+            allUniqueDice.forEach(function(dice) {
+                assert.equal(prob.getDiceProbability(dice), getDiceProbability(dice));
+            });
         });
     });
 });
+
+/**
+ * Generates all possible dice of size `n` and does not
+ * take cardinality into account (i.e. [1,1] and [1,1] are
+ * not the same).
+ * @param n The size of the dice.
+ * @returns {Array} An array of all possible dice.
+ */
+function generateDice(n) {
+    if (n === 0) return [[]];
+
+    var dice = [];
+
+    var nextDice = generateDice(n-1);
+    for (var i = 1; i <= 6; i++) {
+        for (var j = 0; j < nextDice.length; j++) {
+            dice.push(nextDice[j].concat(i));
+        }
+    }
+
+    return dice;
+}
+
+/**
+ * Calculates the fraction of occurrence for this dice among
+ * all the possible dice.
+ * @param dice The dice to get the probability of occurrence for.
+ * @returns {number} The probability of rolling the given dice.
+ */
+function getDiceProbability(dice) {
+    var count = 0;
+
+    for (var i = 0; i < allDice[dice.length].length; i++) {
+        if (isSameDice(allDice[dice.length][i], dice)) count++;
+    }
+
+    return count / _.size(allDice[dice.length]);
+}
+
+/**
+ * Checks if two sets of dice are the same, based on their
+ * cardinality.
+ * @param d1 The first set of dice to check.
+ * @param d2 The second set of dice to check.
+ * @returns {boolean} True if their cardinalities match, false otherwise.
+ */
+function isSameDice(d1, d2) {
+    return _.isEqual(_.countBy(d1), _.countBy(d2));
+}
