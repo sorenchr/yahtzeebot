@@ -6,7 +6,7 @@ var dicekey = require('../dicekey');
 
 describe('dicekey', function() {
     it('should return the correct dice key for all possible dice', function() {
-        var allDice = _.range(7).map(x => gens.allDice(x));
+        var allDice = _.range(6).map(x => gens.allDice(x));
         allDice.forEach(function(dice) {
             assert.equal(dicekey(dice), generateKey(dice));
         });
