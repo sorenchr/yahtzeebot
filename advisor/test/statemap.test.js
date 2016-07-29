@@ -1,8 +1,5 @@
 var chai = require('chai');
 var assert = chai.assert;
-var proxyquire = require('proxyquire').noPreserveCache();
-var ArgumentError = require('../argumenterror');
-var clearRequire = require('clear-require');
 
 describe('StateMap ', function() {
     var StateMap;
@@ -54,42 +51,6 @@ describe('StateMap ', function() {
             assert.equal(statemap.getEV(scorecard, 63), ev);
             assert.isNull(statemap.getEV(scorecard, 62));
         });
-
-        it('should throw error on invalid scorecard', function() {
-            // Start with an empty mock that actually checks isValidScorecard
-            var validatorMock = { };
-            StateMap = proxyquire('../statemap', { './validator': validatorMock });
-
-            var statemap = new StateMap();
-            var scorecard = new Array(15).fill(true);
-            var upperScore = 100;
-            var ev = 25.2;
-
-            statemap.addEV(scorecard, upperScore, ev);
-
-            // Overwrite the isValidScorecard method of the mock
-            validatorMock.isValidScorecard = function(scorecard) { return false };
-
-            assert.throws(statemap.getEV.bind(statemap, scorecard, upperScore), ArgumentError);
-        });
-
-        it('should throw error on invalid upperScore', function() {
-            // Start with an empty mock that actually checks isValidScorecard
-            var validatorMock = { };
-            StateMap = proxyquire('../statemap', { './validator': validatorMock });
-
-            var statemap = new StateMap();
-            var scorecard = new Array(15).fill(true);
-            var upperScore = 100;
-            var ev = 25.2;
-
-            statemap.addEV(scorecard, upperScore, ev);
-
-            // Overwrite the isValidScorecard method of the mock
-            validatorMock.isValidUpperScore = function(upperScore) { return false };
-
-            assert.throws(statemap.getEV.bind(statemap, scorecard, upperScore), ArgumentError);
-        });
     });
 
     describe('#addEV', function() {
@@ -119,42 +80,6 @@ describe('StateMap ', function() {
             assert.equal(statemap.getEV(scorecard, 63), ev);
             assert.isNull(statemap.getEV(scorecard, 62));
         });
-
-        it('should throw error on invalid scorecard', function() {
-            var validatorMock = { isValidScorecard: function(scorecard) { return false } };
-            StateMap = proxyquire('../statemap', { './validator': validatorMock });
-
-            var statemap = new StateMap();
-            var scorecard = new Array(15).fill(true);
-            var upperScore = 100;
-            var ev = 25.2;
-
-            assert.throws(statemap.addEV.bind(statemap, scorecard, upperScore, ev), ArgumentError);
-        });
-
-        it('should throw error on invalid upperScore', function() {
-            var validatorMock = { isValidUpperScore: function(upperScore) { return false } };
-            StateMap = proxyquire('../statemap', { './validator': validatorMock });
-
-            var statemap = new StateMap();
-            var scorecard = new Array(15).fill(true);
-            var upperScore = 100;
-            var ev = 25.2;
-
-            assert.throws(statemap.addEV.bind(statemap, scorecard, upperScore, ev), ArgumentError);
-        });
-
-        it('should throw error on invalid EV', function() {
-            var validatorMock = { isValidEV: function(ev) { return false } };
-            StateMap = proxyquire('../statemap', { './validator': validatorMock });
-
-            var statemap = new StateMap();
-            var scorecard = new Array(15).fill(true);
-            var upperScore = 100;
-            var ev = 25.2;
-
-            assert.throws(statemap.addEV.bind(statemap, scorecard, upperScore, ev), ArgumentError);
-        });
     });
 
     describe('#fromJSON', function() {
@@ -173,61 +98,6 @@ describe('StateMap ', function() {
             assert.equal(statemap.getEV(scorecard1,55),25.2);
             assert.equal(statemap.getEV(scorecard1,53),26.78);
             assert.equal(statemap.getEV(scorecard2,23),43.222);
-        });
-
-        it('should throw error on invalid structure', function() {
-            // Keys with a size not equal to 15
-            var json = { '10111101111111': { '55': 22.2 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '1111000111111111': { '55': 22.2 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            // Upper score keys with negative integers
-            var json = { '110111101111111': { '-5': 33.3 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            // Upper score keys with non-integer characters
-            var json = { '110111101111111': { 'a': 33.3 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '[1]': 33.3 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '#': 33.3 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            // EV's with non-float and non-float values (and infinity)
-            var json = { '110111101111111': { '22': 'abc' } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': true } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': null } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': {} } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': undefined } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': NaN } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': Number.POSITIVE_INFINITY } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            // EV's outside range [0,404]
-            var json = { '110111101111111': { '22': 404.1 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': 405 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
-
-            var json = { '110111101111111': { '22': -1 } };
-            assert.throws(StateMap.fromJSON.bind(StateMap, json));
         });
 
         it('should read JSON from toJSON()', function() {
@@ -287,9 +157,5 @@ describe('StateMap ', function() {
 
             assert.equal(statemap.size(), 3);
         });
-    });
-
-    afterEach(function() {
-        clearRequire('../statemap');
     });
 });

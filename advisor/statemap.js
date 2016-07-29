@@ -1,6 +1,4 @@
 var _ = require('lodash');
-var validator = require('./validator');
-var ArgumentError = require('./argumenterror');
 
 /**
  * Represents a new empty StateMap.
@@ -18,10 +16,6 @@ var StateMap = function() {
  * or null if no EV entry exists.
  */
 StateMap.prototype.getEV = function(scorecard, upperScore) {
-    // Validate inputs
-    if (!validator.isValidScorecard(scorecard)) throw new ArgumentError('Invalid scorecard: ' + scorecard);
-    if (!validator.isValidUpperScore(upperScore)) throw new ArgumentError('Invalid upper score: ' + upperScore);
-
     // Generate the scorecard key
     scorecard = scorecardToString(scorecard);
 
@@ -41,11 +35,6 @@ StateMap.prototype.getEV = function(scorecard, upperScore) {
  * @param ev The EV to store for the scorecard and upper score pair.
  */
 StateMap.prototype.addEV = function (scorecard, upperScore, ev) {
-    // Validate inputs
-    if (!validator.isValidScorecard(scorecard)) throw new ArgumentError('Invalid scorecard: ' + scorecard);
-    if (!validator.isValidUpperScore(upperScore)) throw new ArgumentError('Invalid upper score: ' + upperScore);
-    if (!validator.isValidEV(ev)) throw new ArgumentError('Invalid EV: ' + ev);
-
     // Generate the scorecard key
     scorecard = scorecardToString(scorecard);
 
@@ -91,16 +80,7 @@ StateMap.prototype.toJSON = function() {
  */
 StateMap.fromJSON = function(json) {
     var map = new StateMap();
-
-    for (var scorecard in json) {
-        for (var upperScore in json[scorecard]) {
-            var ev = parseFloat(json[scorecard][upperScore]);
-            upperScore = parseInt(upperScore);
-            var scorecardArray = scorecard.split('').map(x => x === '1');
-            map.addEV(scorecardArray, upperScore, ev);
-        }
-    }
-
+    map.map = json;
     return map;
 };
 
