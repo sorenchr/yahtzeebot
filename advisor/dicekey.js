@@ -7,8 +7,8 @@ var _ = require('lodash');
  */
 var dicekey = function(dice) {
     var key = new Array(6).fill(0);
-    var countMap = _.values(dice);
-    return key.map((val, i) => countMap[i+1]).join('');
+    var countMap = _.countBy(dice);
+    return key.map((val, i) => countMap[i+1] ? countMap[i+1] : 0).join('');
 };
 
 module.exports = dicekey;

@@ -6,15 +6,20 @@ var dicekey = require('../dicekey');
 
 describe('dicekey', function() {
     it('should return the correct dice key for all possible dice', function() {
-        var allDice = _.range(6).map(x => gens.allDice(x));
+        // Generate all possible dice from a length of 0 to 5
+        var allDice = gens.generateDiceUpTo(5);
+
+        // Go through each possible set of dice to check if the dicekey fits
         allDice.forEach(function(dice) {
-            assert.equal(dicekey(dice), generateKey(dice));
+            var key = dicekey(dice);
+
+            // Split up the key and check that the cardinalities match
+            key.split('').forEach(function(keyCount, i) {
+                // Calculate how many dice with the given value are present in the dice
+                var diceCount = dice.reduce((pre, cur) => pre + (cur == i +1 ? 1 : 0), 0);
+
+                assert.equal(keyCount, diceCount);
+            });
         });
     });
 });
-
-function generateKey(dice) {
-    var key = new Array(6).fill(0);
-    var countMap = _.values(dice);
-    return key.map((val, i) => countMap[i+1]).join('');
-}
