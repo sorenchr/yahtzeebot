@@ -207,23 +207,5 @@ describe('score-calculator', function() {
                 assert.equal(scorecalc.getCategoryScore(14, dice), 0);
             });
         });
-
-        it('should throw error on invalid category', function() {
-            var validatorMock = {
-                isValidRoll: function(roll) { return true; },
-                isValidCategory: function(category) { return false; }
-            };
-            var proxyScorecalc = proxyquire('../score-calculator', { './validator': validatorMock });
-            assert.throws(proxyScorecalc.getCategoryScore.bind(proxyScorecalc, 0, [1,2,3,4,5]), ArgumentError);
-        });
-
-        it('should throw error on invalid roll', function() {
-            var validatorMock = {
-                isValidRoll: function(roll) { return false; },
-                isValidCategory: function(category) { return true; }
-            };
-            var proxyScorecalc = proxyquire('../score-calculator', { './validator': validatorMock });
-            assert.throws(proxyScorecalc.getCategoryScore.bind(proxyScorecalc, 0, [1,2,3,4,5]), ArgumentError);
-        });
     });
 });

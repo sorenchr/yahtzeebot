@@ -10,10 +10,6 @@ var sc = module.exports;
  * @returns {*} The score for the given category and roll.
  */
 sc.getCategoryScore = function(category, roll) {
-    // Validate input
-    if (!validator.isValidCategory(category)) throw new ArgumentError('Invalid category: ' + category);
-    if (!validator.isValidRoll(roll)) throw new ArgumentError('Invalid roll: ' + roll);
-    
     // Get the score for the given category
     if ((category >= 0) && (category <= 5)) {
         return getNumberOfDice(category + 1, roll) * (category + 1);

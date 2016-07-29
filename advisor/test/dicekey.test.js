@@ -7,7 +7,7 @@ var dicekey = require('../dicekey');
 describe('dicekey', function() {
     it('should return the correct dice key for all possible dice', function() {
         // Generate all possible dice from a length of 0 to 5
-        var allDice = gens.generateDiceUpTo(5);
+        var allDice = gens.diceUpTo(5);
 
         // Go through each possible set of dice to check if the dicekey fits
         allDice.forEach(function(dice) {

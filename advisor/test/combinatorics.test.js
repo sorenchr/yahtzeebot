@@ -1,18 +1,18 @@
 var chai = require('chai');
 var assert = chai.assert;
 var _ = require('lodash');
-var cb = require('../combinatorics');
-var ArgumentError = require('../argumenterror');
-var proxyquire = require('proxyquire');
+var cmb = require('../combinatorics');
+var gens = require('../generators');
+var dicekey = require('../dicekey');
 
 // Generate all rolls and keepers
-var allRolls = sortedDiceArray(generateDice(5));
-var allKeepers = _.range(6).reduce((pre, cur) => pre.concat(sortedDiceArray(generateDice(cur))), []);
+var allRolls = sortedDiceArray(gens.dice(5));
+var allKeepers = sortedDiceArray(gens.diceUpTo(5));
 
 // Generate all keepers from rolls
 var rollKeepers = {};
 allRolls.forEach(function(roll) {
-    var key = roll.sort().join('');
+    var key = dicekey(roll);
     rollKeepers[key] = [];
 
     allKeepers.forEach(function(keepers) {
@@ -23,34 +23,13 @@ allRolls.forEach(function(roll) {
 // Generate all rolls from keepers
 var keepersRolls = {};
 allKeepers.forEach(function(keepers) {
-    var key = keepers.sort().join('');
+    var key = dicekey(keepers);
     keepersRolls[key] = [];
 
     allRolls.forEach(function(roll) {
         if (arrayContains(roll, keepers)) keepersRolls[key].push(roll);
     });
 });
-
-/**
- * Generates all possible dice for the given size.
- * @param size The size used for generating the dice.
- * @param minValue The minimum value of the next integer, defaults to 1.
- * @returns {Array} All possible dice for the given size.
- */
-function generateDice(size, minValue) {
-    if (typeof minValue === 'undefined') minValue = 1;
-    if (size === 0) return [[]];
-
-    var output = [];
-
-    for (var i = minValue; i <= 6; i++) {
-        var nextDice = generateDice(size-1, i);
-        var padded = nextDice.map(x => _.concat(i, x));
-        output = output.concat(padded);
-    }
-
-    return output;
-}
 
 /**
  * Checks if the first array contains the second array, order
@@ -81,7 +60,9 @@ function arrayContains(a, b) {
 describe('combinatorics', function() {
     describe('#getAllRolls', function () {
         it('should return all 5 dice rolls', function () {
-            var cbAllRolls = sortedDiceArray(cb.getAllRolls());
+            this.timeout(0); // Kill the timeout for this test
+
+            var cbAllRolls = sortedDiceArray(cmb.getAllRolls());
 
             assert.equal(allRolls.length, cbAllRolls.length);
             assert.sameDeepMembers(allRolls, cbAllRolls);
@@ -90,8 +71,9 @@ describe('combinatorics', function() {
 
     describe('#getAllKeepers', function() {
         it('should return all 0 - 5 dice rolls', function() {
-            this.timeout(5000);
-            var cbAllKeepers = sortedDiceArray(cb.getAllKeepers());
+            this.timeout(0); // Kill the timeout for this test
+
+            var cbAllKeepers = sortedDiceArray(cmb.getAllKeepers());
 
             assert.equal(allKeepers.length, cbAllKeepers.length);
             assert.sameDeepMembers(allKeepers, cbAllKeepers);
@@ -99,22 +81,12 @@ describe('combinatorics', function() {
     });
 
     describe('#getKeepers', function() {
-        it('should throw ArgumentError on invalid input', function() {
-            var validatorMock = {
-                isValidRoll: function(roll) { return false }
-            };
-
-            var cbProxy = proxyquire('../combinatorics', { './validator': validatorMock });
-
-            assert.throws(cbProxy.getKeepers.bind(cb, [1,2,3,4,5]), ArgumentError);
-        });
-
         it('should return correct keepers for all rolls', function() {
-            this.timeout(5000);
+            this.timeout(0); // Kill the timeout for this test
 
             allRolls.forEach(function(roll) {
-                var keepersForRoll = rollKeepers[roll.join('')];
-                var cbRollKeepers = sortedDiceArray(cb.getKeepers(roll));
+                var keepersForRoll = rollKeepers[dicekey(roll)];
+                var cbRollKeepers = sortedDiceArray(cmb.getKeepers(roll));
 
                 assert.equal(keepersForRoll.length, cbRollKeepers.length);
                 assert.sameDeepMembers(keepersForRoll, cbRollKeepers);
@@ -123,22 +95,12 @@ describe('combinatorics', function() {
     });
 
     describe('#getRolls', function() {
-        it('should throw ArgumentError on invalid input', function() {
-            var validatorMock = {
-                isValidDice: function(dice) { return false }
-            };
-
-            var cbProxy = proxyquire('../combinatorics', { './validator': validatorMock });
-
-            assert.throws(cbProxy.getRolls.bind(cb, [1,2,3]), ArgumentError);
-        });
-
         it('should return correct rolls for all keepers', function() {
-            this.timeout(10000);
+            this.timeout(0); // Kill the timeout for this test
 
             allKeepers.forEach(function(keepers) {
-                var rollsForKeepers = keepersRolls[keepers.join('')];
-                var cbKeepersRolls = sortedDiceArray(cb.getRolls(keepers));
+                var rollsForKeepers = keepersRolls[dicekey(keepers)];
+                var cbKeepersRolls = sortedDiceArray(cmb.getRolls(keepers));
 
                 assert.equal(rollsForKeepers.length, cbKeepersRolls.length);
                 assert.sameDeepMembers(rollsForKeepers, cbKeepersRolls);

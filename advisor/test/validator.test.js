@@ -255,9 +255,8 @@ describe('validator', function() {
         });
 
         it('should return true on integers in [1,2]', function() {
-            for (var i = 1; i <= 2; i++) {
-                assert.isTrue(validator.isValidRollsLeft(i));
-            }
+            assert.isTrue(validator.isValidRollsLeft(1));
+            assert.isTrue(validator.isValidRollsLeft(2));
         });
     });
 });

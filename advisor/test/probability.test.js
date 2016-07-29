@@ -10,7 +10,7 @@ describe('probability ', function() {
             this.timeout(0); // Kill the timeout for this test
 
             var allDice = generateDice(0);
-            var allUniqueDice = gens.generateDice(0);
+            var allUniqueDice = gens.dice(0);
 
             allUniqueDice.forEach(function(dice) {
                 assert.equal(prob.getDiceProbability(dice), getDiceProbability(dice, allDice));
@@ -21,7 +21,7 @@ describe('probability ', function() {
             this.timeout(0); // Kill the timeout for this test
 
             var allDice = generateDice(1);
-            var allUniqueDice = gens.generateDice(1);
+            var allUniqueDice = gens.dice(1);
 
             allUniqueDice.forEach(function(dice) {
                 assert.equal(prob.getDiceProbability(dice), getDiceProbability(dice, allDice));
@@ -32,7 +32,7 @@ describe('probability ', function() {
             this.timeout(0); // Kill the timeout for this test
 
             var allDice = generateDice(2);
-            var allUniqueDice = gens.generateDice(2);
+            var allUniqueDice = gens.dice(2);
 
             allUniqueDice.forEach(function(dice) {
                 assert.equal(prob.getDiceProbability(dice), getDiceProbability(dice, allDice));
@@ -43,7 +43,7 @@ describe('probability ', function() {
             this.timeout(0); // Kill the timeout for this test
 
             var allDice = generateDice(3);
-            var allUniqueDice = gens.generateDice(3);
+            var allUniqueDice = gens.dice(3);
 
             allUniqueDice.forEach(function(dice) {
                 assert.equal(prob.getDiceProbability(dice), getDiceProbability(dice, allDice));
@@ -54,7 +54,7 @@ describe('probability ', function() {
             this.timeout(0); // Kill the timeout for this test
 
             var allDice = generateDice(4);
-            var allUniqueDice = gens.generateDice(4);
+            var allUniqueDice = gens.dice(4);
 
             allUniqueDice.forEach(function(dice) {
                 assert.equal(prob.getDiceProbability(dice), getDiceProbability(dice, allDice));
@@ -65,7 +65,7 @@ describe('probability ', function() {
             this.timeout(0); // Kill the timeout for this test
 
             var allDice = generateDice(5);
-            var allUniqueDice = gens.generateDice(5);
+            var allUniqueDice = gens.dice(5);
 
             allUniqueDice.forEach(function(dice) {
                 assert.equal(prob.getDiceProbability(dice), getDiceProbability(dice, allDice));

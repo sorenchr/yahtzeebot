@@ -7,7 +7,7 @@ var generators = module.exports;
  * @param size The size used for generating the dice.
  * @returns {Array} All possible dice for the given size.
  */
-generators.generateDice = function(size) {
+generators.dice = function(size) {
     var recurFn = function(size, minValue) {
         if (size === 0) return [[]];
 
@@ -29,6 +29,20 @@ generators.generateDice = function(size) {
  * Generates all possible dice with the size from 0 to the given size.
  * @param size The maximum size for the dice.
  */
-generators.generateDiceUpTo = function(size) {
-    return _.flatten(_.range(size+1).map(x => generators.generateDice(x)));
+generators.diceUpTo = function(size) {
+    return _.flatten(_.range(size+1).map(x => generators.dice(x)));
+};
+
+/**
+ * Generates the powerset (all possible subsets) of the given array.
+ * @param arr The array to generate the powerset for.
+ * @returns {Array} The power of the given array.
+ */
+generators.powerset = function(arr) {
+    if (arr.length === 0) return [[]];
+
+    var rest = generators.powerset(arr.slice(1));
+    var combined = rest.map(x => x.concat(arr[0]));
+
+    return rest.concat(combined);
 };
