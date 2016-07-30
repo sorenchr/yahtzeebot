@@ -4,34 +4,17 @@ var _ = require('lodash');
 var scorecalc = require('./score-calculator');
 var StateMap = require('./statemap');
 var cmb = require('./combinatorics');
-var prob = require('./probability');
+var jsonfile = require('jsonfile');
+var config = require('./config');
+var FinalRollsMap = require('./finalrollsmap');
+var KeepersMap = require('./keepersmap');
+var RollsMap = require('./rollsmap');
 
 var advisor = module.exports;
 
-// The StateMap used for EV lookups
-var stateMap;
-
-/**
- * Initialize the module.
- * @param settings An object containing settings.
- */
-advisor.init = function(settings) {
-    if (!isValidSettings(settings)) throw new ArgumentError('Invalid settings: ' + settings);
-    stateMap = settings['stateMap'];
-};
-
-/**
- * Checks if the given settings are valid and contains a StateMap.
- * @param settings The settings to check.
- * @returns {boolean} True if the settings are valid, false otherwise.
- */
-function isValidSettings(settings) {
-    if (settings !== Object(settings)) return false;
-    if (Array.isArray(settings)) return false;
-    if (!('stateMap' in settings)) return false;
-    if (!(settings['stateMap'] instanceof StateMap)) return false;
-    return true;
-}
+// Initialize the StateMap
+var json = jsonfile.readFileSync(config.stateMap);
+var stateMap = StateMap.fromJSON(json);
 
 /**
  * Returns the best keepers to choose from the given game state.
@@ -135,143 +118,6 @@ advisor.getBestCategory = function(scorecard, upperScore, dice) {
     }
 
     return bestCategory;
-};
-
-/**
- * Represents a map of final rolls and their EV's.
- * @param scorecard The scorecard used in constructing the final rolls.
- * @param upperScore The upper score used in constructing the final rolls.
- * @constructor
- */
-var FinalRollsMap = function(scorecard, upperScore) {
-    var rollsEV = {};
-
-    // Loop through each possible roll and calculate their EV's
-    cmb.getAllRolls().forEach(function(roll) {
-        // Get the best category to score in for this roll
-        var bestCategory = advisor.getBestCategory(scorecard, upperScore, roll);
-
-        // Find the new upper score from scoring in this category
-        var categoryScore = scorecalc.getCategoryScore(bestCategory, roll);
-        var isUpperCategory = bestCategory >= 0 && bestCategory <= 5;
-        var newUpperScore = isUpperCategory ? upperScore + categoryScore : upperScore;
-
-        // Calculate the category EV
-        var newScorecard = getMarkedScorecard(scorecard, bestCategory);
-        var bestCategoryEV = stateMap.getEV(newScorecard, newUpperScore) + categoryScore;
-
-        // Check if scoring the category results in the upper section bonus
-        if (upperScore < 63 && newUpperScore >= 63) bestCategoryEV += 50;
-
-        // Store the EV for this roll
-        var key = roll.sort().join('');
-        rollsEV[key] = bestCategoryEV;
-    });
-
-    this.rollsEV = rollsEV;
-};
-
-/**
- * Returns the EV for the given roll.
- * @param roll The roll to look up EV for.
- * @returns {number} The EV for the given roll.
- */
-FinalRollsMap.prototype.getEV = function(roll) {
-    var key = roll.sort().join('');
-    return this.rollsEV[key];
-};
-
-/**
- * Represents a map of keepers and their EV's.
- * @param nextRolls A map of the next rolls these keepers should refer to.
- * @constructor
- */
-var KeepersMap = function(nextRolls) {
-    var keepersEV = {};
-
-    // Loop through each possible keepers and calculate their EV's
-    cmb.getAllKeepers().forEach(function(keepers) {
-        var evSum = 0; // Will contain the total EV for these keepers
-
-        // Iterate through all possible rolls resulting from these keepers
-        cmb.getRolls(keepers).forEach(function(roll) {
-            var remDice = subtractDice(roll, keepers);
-            evSum += prob.getDiceProbability(remDice) * nextRolls.getEV(roll);
-        });
-
-        // Store the EV for these keepers
-        var key = keepers.sort().join('');
-        keepersEV[key] = evSum;
-    });
-
-    this.keepersEV = keepersEV;
-};
-
-/**
- * Subtracts all dice in `b` from the dice in `a`. Essentially
- * a subtraction of cardinalities.
- * @param a The first array.
- * @param b The second array that will subtracted from the first array.
- * @returns {Array.<number>} The difference between the two arrays.
- */
-function subtractDice(a, b) {
-    var newDice = a.slice(0);
-
-    for (var i = 0; i < b.length; i++) {
-        for (var k = 0; k < newDice.length; k++) {
-            if (newDice[k] == b[i]) {
-                newDice.splice(k, 1);
-                break;
-            }
-        }
-    }
-
-    return newDice;
-}
-
-/**
- * Returns the EV for the given keepers.
- * @param keepers The keepers to look up EV for.
- * @returns {number} The EV for the given keepers.
- */
-KeepersMap.prototype.getEV = function(keepers) {
-    var key = keepers.sort().join('');
-    return this.keepersEV[key];
-};
-
-/**
- * Represents a map of rolls and their EV's.
- * @param nextKeepers A map of the next keepers these rolls should refer to.
- * @constructor
- */
-var RollsMap = function(nextKeepers) {
-    var rollsEV = {};
-
-    // Iterate through all possible rolls and calculate their EV's
-    cmb.getAllRolls().forEach(function(roll) {
-        var ev = 0;
-
-        // Iterate through all possible keepers resulting from this roll
-        cmb.getKeepers(roll).forEach(function(keepers) {
-            var keepersEV = nextKeepers.getEV(keepers);
-            if (keepersEV >= ev) ev = keepersEV;
-        });
-
-        var key = roll.sort().join('');
-        rollsEV[key] = ev;
-    });
-
-    this.rollsEV = rollsEV;
-};
-
-/**
- * Returns the EV for the given roll.
- * @param roll The roll to look up EV for.
- * @returns {number} The EV for the given roll.
- */
-RollsMap.prototype.getEV = function(roll) {
-    var key = roll.sort().join('');
-    return this.rollsEV[key];
 };
 
 /**
