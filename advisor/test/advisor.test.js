@@ -193,7 +193,7 @@ describe('advisor', function() {
 
             // Verify that the FinalRollsMap was built
             assert.isTrue(frmSpy.calledWithNew());
-            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore));
+            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, {}));
 
             // Verify that the KeepersMap was called with the FinalRollsMap
             assert.isTrue(kmSpy.calledWithNew());
@@ -261,7 +261,7 @@ describe('advisor', function() {
 
             // Verify that the FinalRollsMap was built
             assert.isTrue(frmSpy.calledWithNew());
-            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore));
+            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, {}));
 
             // Verify that the KeepersMap was called with the FinalRollsMap
             assert.isTrue(kmSpy.calledWithNew());

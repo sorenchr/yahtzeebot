@@ -33,7 +33,7 @@ advisor.getBestKeepers = function(scorecard, upperScore, dice, rollsLeft) {
     if (!validator.isValidRollsLeft(rollsLeft)) throw new ArgumentError('Invalid rolls left: ' + rollsLeft);
 
     // Generate the final rolls for this state
-    var finalRollsMap = new FinalRollsMap(scorecard, upperScore);
+    var finalRollsMap = new FinalRollsMap(scorecard, upperScore, stateMap);
 
     // Generate the second keepers based on the final rolls
     var secondKeepers = new KeepersMap(finalRollsMap);
