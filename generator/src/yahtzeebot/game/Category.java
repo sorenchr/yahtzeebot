@@ -28,4 +28,13 @@ public enum Category {
         return this.name;
     }
 
+    public boolean isUpperCategory() {
+        return this.equals(Category.ONES)
+                || this.equals(Category.TWOS)
+                || this.equals(Category.THREES)
+                || this.equals(Category.FOURS)
+                || this.equals(Category.FIVES)
+                || this.equals(Category.SIXES);
+    }
+
 }

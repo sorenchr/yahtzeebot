@@ -1,6 +1,5 @@
 package yahtzeebot.game;
 
-
 /**
  * A six-sided die.
  */

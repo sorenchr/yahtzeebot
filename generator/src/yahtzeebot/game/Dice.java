@@ -39,12 +39,29 @@ public class Dice {
         return dice.size();
     }
 
+    public int getSum() {
+        int sum = 0;
+
+        for (Die die : dice) {
+            sum += die.getFaceValue();
+        }
+
+        return sum;
+    }
+
     public List<Die> getDice() {
         return dice;
     }
 
-    public boolean contains(Dice dice) {
-        return CollectionUtils.isSubCollection(dice.getDice(), this.dice);
+    public Dice addDice(Dice dice) {
+        List<Die> newDice = new ArrayList<Die>(this.dice);
+        newDice.addAll(dice.getDice());
+        return new Dice(newDice);
+    }
+
+    public Dice subtractDice(Dice dice) {
+        List<Die> newDices = new ArrayList(CollectionUtils.subtract(this.dice, dice.dice));
+        return new Dice(newDices);
     }
 
     @Override
@@ -54,12 +71,12 @@ public class Dice {
 
         Dice dice1 = (Dice) o;
 
-        return dice.equals(dice1.dice);
+        return getCardinalityMap().equals(dice1.getCardinalityMap());
     }
 
     @Override
     public int hashCode() {
-        return dice.hashCode();
+        return getCardinalityMap().hashCode();
     }
 
 }
