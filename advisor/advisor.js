@@ -1,20 +1,40 @@
 var validator = require('./validator');
 var ArgumentError = require('./argumenterror');
+var InitializationError = require('./initializationerror');
 var _ = require('lodash');
 var scorecalc = require('./score-calculator');
 var StateMap = require('./statemap');
 var cmb = require('./combinatorics');
-var jsonfile = require('jsonfile');
-var config = require('./config');
 var FinalRollsMap = require('./finalrollsmap');
 var KeepersMap = require('./keepersmap');
 var RollsMap = require('./rollsmap');
 
 var advisor = module.exports;
 
-// Initialize the StateMap
-var json = jsonfile.readFileSync(config.stateMap);
-var stateMap = StateMap.fromJSON(json);
+// The StateMap used for EV lookups
+var settings;
+
+/**
+ * Initialize the module.
+ * @param settings An object containing settings.
+ */
+advisor.init = function(initSettings) {
+    if (!isValidSettings(initSettings)) throw new ArgumentError('Invalid settings: ' + initSettings);
+    settings = initSettings;
+};
+
+/**
+ * Checks if the given settings are valid.
+ * @param settings The settings to check.
+ * @returns {boolean} True if the settings are valid, false otherwise.
+ */
+function isValidSettings(settings) {
+    if (settings !== Object(settings)) return false;
+    if (Array.isArray(settings)) return false;
+    if (!('stateMap' in settings)) return false;
+    if (!(settings['stateMap'] instanceof StateMap)) return false;
+    return true;
+}
 
 /**
  * Returns the best keepers to choose from the given game state.
@@ -25,6 +45,9 @@ var stateMap = StateMap.fromJSON(json);
  * @returns {Array.<number>} The best keepers to choose from the given game state.
  */
 advisor.getBestKeepers = function(scorecard, upperScore, dice, rollsLeft) {
+    // Check that module has been initialized
+    if (!settings) throw new InitializationError('Module has not been initialized via init()');
+
     // Validate inputs
     if (!validator.isValidScorecard(scorecard)) throw new ArgumentError('Invalid scorecard: ' + scorecard);
     if (!_.includes(scorecard, false)) throw new ArgumentError('Scorecard is full: ' + scorecard);
@@ -33,7 +56,7 @@ advisor.getBestKeepers = function(scorecard, upperScore, dice, rollsLeft) {
     if (!validator.isValidRollsLeft(rollsLeft)) throw new ArgumentError('Invalid rolls left: ' + rollsLeft);
 
     // Generate the final rolls for this state
-    var finalRollsMap = new FinalRollsMap(scorecard, upperScore, stateMap);
+    var finalRollsMap = new FinalRollsMap(scorecard, upperScore, settings['stateMap']);
 
     // Generate the second keepers based on the final rolls
     var secondKeepers = new KeepersMap(finalRollsMap);
@@ -82,6 +105,9 @@ function getBestKeepers(roll, allKeepers) {
  * @returns {number} The best category to score in from the given game state.
  */
 advisor.getBestCategory = function(scorecard, upperScore, dice) {
+    // Check that module has been initialized
+    if (!settings) throw new InitializationError('Module has not been initialized via init()');
+
     // Validate inputs
     if (!validator.isValidScorecard(scorecard)) throw new ArgumentError('Invalid scorecard: ' + scorecard);
     if (!validator.isValidUpperScore(upperScore)) throw new ArgumentError('Invalid upper score: ' + upperScore);
@@ -105,7 +131,7 @@ advisor.getBestCategory = function(scorecard, upperScore, dice) {
         var newUpperScore = isUpperCategory ? upperScore + categoryScore : upperScore;
 
         // Calculate the category EV
-        var categoryEV = stateMap.getEV(newScorecard, newUpperScore) + categoryScore;
+        var categoryEV = settings['stateMap'].getEV(newScorecard, newUpperScore) + categoryScore;
 
         // Check if scoring the category results in the upper section bonus
         if (upperScore < 63 && newUpperScore >= 63) categoryEV += 50;

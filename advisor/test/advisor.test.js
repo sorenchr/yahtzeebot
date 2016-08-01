@@ -1,13 +1,65 @@
 var chai = require('chai');
 var assert = chai.assert;
 var ArgumentError = require('../argumenterror');
+var InitializationError = require('../initializationerror');
 var sinon = require('sinon');
 var StateMap = require('../statemap');
 var proxyquire = require('proxyquire').noPreserveCache();
 var _ = require('lodash');
 
 describe('advisor', function() {
+    describe('#init', function() {
+        it('should throw ArgumentError on missing settings', function() {
+            var advisor = require('../advisor');
+            assert.throws(advisor.init.bind(advisor), ArgumentError);
+        });
+
+        it('should throw ArgumentError on invalid settings', function() {
+            var advisor = require('../advisor');
+            assert.throws(advisor.init.bind(advisor, 1), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, 'a'), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, 2.2), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, null), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, true), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, undefined), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, NaN), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, [2]), ArgumentError);
+        });
+
+        it('should throw ArgumentError on invalid StateMap', function() {
+            var advisor = require('../advisor');
+            assert.throws(advisor.init.bind(advisor, { stateMap: 1 }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: 'a' }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: 2.2 }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: {} }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: null }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: true }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: undefined }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: NaN }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: new Date() }), ArgumentError);
+            assert.throws(advisor.init.bind(advisor, { stateMap: [2] }), ArgumentError);
+        });
+
+        it('should throw ArgumentError on missing StateMap', function() {
+            var advisor = require('../advisor');
+            assert.throws(advisor.init.bind(advisor, { something: 'else' }), ArgumentError);
+        });
+    });
+
     describe('#getBestKeepers', function () {
+        it('should throw InitializationError if the module has not been initialized', function() {
+            // Setup the advisor module
+            var advisor = require('../advisor');
+
+            // Setup the getBestKeepers call arguments
+            var scorecard = new Array(15).fill(false);
+            var dice = [1,2,3,4,5];
+            var upperScore = 55;
+            var rollsLeft = 1;
+
+            assert.throws(advisor.getBestKeepers.bind(advisor, scorecard, upperScore, dice, rollsLeft), InitializationError);
+        });
+
         it('should throw ArgumentError on invalid scorecard', function () {
             // Setup a validator that will return false on isValidScorecard
             var vMock = {
@@ -17,16 +69,11 @@ describe('advisor', function() {
                 isValidDice: function(dice) { return true; }
             };
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './validator': vMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './validator': vMock
             });
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestKeepers call arguments
             var scorecard = new Array(15).fill(false);
@@ -46,16 +93,11 @@ describe('advisor', function() {
                 isValidDice: function(dice) { return true; }
             };
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './validator': vMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './validator': vMock
             });
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestKeepers call arguments
             var scorecard = new Array(15).fill(false);
@@ -75,16 +117,11 @@ describe('advisor', function() {
                 isValidDice: function(dice) { return false; }
             };
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './validator': vMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './validator': vMock
             });
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestKeepers call arguments
             var scorecard = new Array(15).fill(false);
@@ -104,16 +141,11 @@ describe('advisor', function() {
                 isValidDice: function(dice) { return true; }
             };
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './validator': vMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './validator': vMock
             });
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestKeepers call arguments
             var scorecard = new Array(15).fill(false);
@@ -125,15 +157,9 @@ describe('advisor', function() {
         });
 
         it('should throw ArgumentError on full scorecard', function () {
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
-                'jsonfile': jfMock,
-                './statemap': smMock
-            });
+            var advisor = require('../advisor');
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestKeepers call arguments
             var scorecard = new Array(15).fill(true);
@@ -175,25 +201,21 @@ describe('advisor', function() {
             };
             var kmSpy = sinon.spy(function() { return kmStub });
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                'jsonfile': jfMock,
-                './statemap': smMock,
                 './combinatorics': cmbMock,
                 './finalrollsmap': frmSpy,
                 './keepersmap': kmSpy
             });
+            var smMock = sinon.createStubInstance(StateMap);
+            advisor.init({ stateMap: smMock });
 
             // Call the method on the advisor module
             var bestKeepers = advisor.getBestKeepers(scorecard, upperScore, dice, rollsLeft);
 
             // Verify that the FinalRollsMap was built
             assert.isTrue(frmSpy.calledWithNew());
-            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, {}));
+            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, smMock));
 
             // Verify that the KeepersMap was called with the FinalRollsMap
             assert.isTrue(kmSpy.calledWithNew());
@@ -242,26 +264,22 @@ describe('advisor', function() {
                 if (inputMap === rmStub) return firstKmStub;
             });
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                'jsonfile': jfMock,
-                './statemap': smMock,
                 './combinatorics': cmbMock,
                 './finalrollsmap': frmSpy,
                 './keepersmap': kmSpy,
                 './rollsmap': rmSpy
             });
+            var smMock = sinon.createStubInstance(StateMap);
+            advisor.init({ stateMap: smMock });
 
             // Call the method on the advisor module
             var bestKeepers = advisor.getBestKeepers(scorecard, upperScore, dice, rollsLeft);
 
             // Verify that the FinalRollsMap was built
             assert.isTrue(frmSpy.calledWithNew());
-            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, {}));
+            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, smMock));
 
             // Verify that the KeepersMap was called with the FinalRollsMap
             assert.isTrue(kmSpy.calledWithNew());
@@ -281,6 +299,17 @@ describe('advisor', function() {
     });
 
     describe('#getBestCategory', function() {
+        it('should throw InitializationError if the module has not been initialized', function() {
+            // Setup the advisor module
+            var advisor = require('../advisor');
+
+            // Setup the getBestCategory call arguments
+            var scorecard = new Array(15).fill(false);
+            var dice = [1,2,3,4,5];
+
+            assert.throws(advisor.getBestCategory.bind(advisor, scorecard, 55, dice), InitializationError);
+        });
+
         it('should throw ArgumentError on invalid scorecard', function () {
             // Setup a validator that will return false on isValidScorecard
             var vMock = {
@@ -289,16 +318,11 @@ describe('advisor', function() {
                 isValidDice: function(dice) { return true; }
             };
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './validator': vMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './validator': vMock
             });
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestCategory call arguments
             var scorecard = new Array(15).fill(false);
@@ -315,16 +339,11 @@ describe('advisor', function() {
                 isValidDice: function(dice) { return true; }
             };
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './validator': vMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './validator': vMock
             });
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestCategory call arguments
             var scorecard = new Array(15).fill(false);
@@ -341,16 +360,11 @@ describe('advisor', function() {
                 isValidDice: function(dice) { return false; }
             };
 
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './validator': vMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './validator': vMock
             });
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestCategory call arguments
             var scorecard = new Array(15).fill(false);
@@ -360,15 +374,9 @@ describe('advisor', function() {
         });
 
         it('should throw ArgumentError on full scorecard', function () {
-            // Setup jsonfile and StateMap mocks
-            var jfMock = { readFileSync: function() { return {} } };
-            var smMock = { fromJSON: function() { return {} } };
-
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
-                'jsonfile': jfMock,
-                './statemap': smMock
-            });
+            var advisor = require('../advisor');
+            advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestCategory call arguments
             var scorecard = new Array(15).fill(true);
@@ -384,13 +392,11 @@ describe('advisor', function() {
             var scorecardToMatch = '000000000000001';
 
             // Setup a mock StateMap that will return EV based on the input scorecard
-            var smMock = {
-                fromJSON: function() { return smMock },
-                getEV: function(scorecard) {
-                    var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
-                    if (scorecardString === scorecardToMatch) return 2.0;
-                    return 1.0;
-                }
+            var smMock = sinon.createStubInstance(StateMap);
+            smMock.getEV = function(scorecard) {
+                var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
+                if (scorecardString === scorecardToMatch) return 2.0;
+                return 1.0;
             };
 
             // Setup a score-calculator mock that will just return 0 for everything
@@ -398,15 +404,11 @@ describe('advisor', function() {
                 getCategoryScore: function() { return 0; }
             };
 
-            // Setup jsonfile mock
-            var jfMock = { readFileSync: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
+            advisor.init({ stateMap: smMock });
 
             // Setup arguments for the getBestCategory() call
             var scorecard = new Array(15).fill(false);
@@ -423,10 +425,8 @@ describe('advisor', function() {
 
         it('should choose the category with the best score', function() {
             // Setup a mock StateMap that will just return 0 on any input
-            var smMock = {
-                fromJSON: function() { return smMock },
-                getEV: function() { return 0; }
-            };
+            var smMock = sinon.createStubInstance(StateMap);
+            smMock.getEV = function() { return 0; };
 
             // Setup a score-calculator mock that will return 1 for the best category.
             // Used for coercing the advisor module into choosing the marked category.
@@ -438,15 +438,11 @@ describe('advisor', function() {
                 }
             };
 
-            // Setup jsonfile mock
-            var jfMock = { readFileSync: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
+            advisor.init({ stateMap: smMock });
 
             // Setup arguments for the getBestCategory() call
             var scorecard = new Array(15).fill(false);
@@ -468,14 +464,12 @@ describe('advisor', function() {
             var dice = [1,2,3,4,5];
 
             // Setup a mock StateMap that will vary in EV based on scorecard input
-            var smMock = {
-                fromJSON: function() { return smMock },
-                getEV: function(smScorecard) {
-                    var scorecardString = smScorecard.map(x => x ? 1 : 0).join('');
-                    if (scorecardString === '010000000000000') return 40.0;
-                    if (scorecardString === '001000000000000') return 20.0;
-                    return 0.0;
-                }
+            var smMock = sinon.createStubInstance(StateMap);
+            smMock.getEV = function(smScorecard) {
+                var scorecardString = smScorecard.map(x => x ? 1 : 0).join('');
+                if (scorecardString === '010000000000000') return 40.0;
+                if (scorecardString === '001000000000000') return 20.0;
+                return 0.0;
             };
 
             // Setup a score-calculator mock that will vary in EV based on category input
@@ -487,15 +481,11 @@ describe('advisor', function() {
                 }
             };
 
-            // Setup jsonfile mock
-            var jfMock = { readFileSync: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
+            advisor.init({ stateMap: smMock });
 
             // The advisor should suggest scoring the 3rd category because the sum of the
             // EV and score is greater than scoring one of the two by itself
@@ -504,14 +494,12 @@ describe('advisor', function() {
 
         it('should skip marked categories', function() {
             // Setup a mock StateMap that will vary in EV based on scorecard input
-            var smMock = {
-                fromJSON: function() { return smMock },
-                getEV: function(scorecard) {
-                    var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
-                    if (scorecardString === '000000000000001') return 5.0;
-                    if (scorecardString === '000000010000001') return 2.0;
-                    return 1.0;
-                }
+            var smMock = sinon.createStubInstance(StateMap);
+            smMock.getEV = function(scorecard) {
+                var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
+                if (scorecardString === '000000000000001') return 5.0;
+                if (scorecardString === '000000010000001') return 2.0;
+                return 1.0;
             };
 
             // Setup a score-calculator mock that just return 0 on any input
@@ -519,15 +507,11 @@ describe('advisor', function() {
                 getCategoryScore: function(category, dice) { return 0; }
             };
 
-            // Setup jsonfile mock
-            var jfMock = { readFileSync: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
+            advisor.init({ stateMap: smMock });
 
             // Setup arguments for the getBestCategory() call
             var scorecard = new Array(15).fill(false);
@@ -545,13 +529,11 @@ describe('advisor', function() {
             var returnEV = 60.9;
 
             // Setup a mock StateMap that will vary in EV based on a specific scorecard
-            var smMock = {
-                fromJSON: function() { return smMock },
-                getEV: function(scorecard) {
-                    var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
-                    if (scorecardString === '111110000000001') return returnEV;
-                    return 1.0;
-                }
+            var smMock = sinon.createStubInstance(StateMap);
+            smMock.getEV = function(scorecard) {
+                var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
+                if (scorecardString === '111110000000001') return returnEV;
+                return 1.0;
             };
 
             // Setup a score-calculator mock that will vary in EV based on category input
@@ -562,15 +544,11 @@ describe('advisor', function() {
                 }
             };
 
-            // Setup jsonfile mock
-            var jfMock = { readFileSync: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
+            advisor.init({ stateMap: smMock });
 
             // Setup arguments for the getBestCategory() call
             var scorecard = '111110000000000'.split('').map(x => x === '1');
@@ -589,10 +567,8 @@ describe('advisor', function() {
 
         it('should trigger the upper section bonus at an upper score of 63 or higher', function() {
             // Setup a mock StateMap that will just return 0 on any input
-            var smMock = {
-                fromJSON: function() { return smMock },
-                getEV: function() { return 0; }
-            };
+            var smMock = sinon.createStubInstance(StateMap);
+            smMock.getEV = function() { return 0; }
 
             // Setup a score-calculator mock that will vary in EV based on category input
             var returnVal = 2;
@@ -604,15 +580,11 @@ describe('advisor', function() {
                 }
             };
 
-            // Setup jsonfile mock
-            var jfMock = { readFileSync: function() { return {} } };
-
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
+            advisor.init({ stateMap: smMock });
 
             // Setup arguments for the getBestCategory() call
             var scorecard = '000000000000000'.split('').map(x => x === '1');
