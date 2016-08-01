@@ -33,18 +33,10 @@ describe('FinalRollsMap', function() {
                 getAllRolls: function() { return rolls; }
             };
 
-            // Setup an advisor mock to inject a pre-determined category
-            var aMock = {
-                getBestCategory: function(scorecard, upperScore, dice) {
-                    return bestCategory;
-                }
-            };
-
             // Setup the FinalRollsMap module
             var FinalRollsMap = proxyquire('../finalrollsmap', {
                 './combinatorics': cmbMock,
-                './score-calculator': scMock,
-                './advisor': aMock
+                './score-calculator': scMock
             });
 
             // Setup arguments for the method call
@@ -81,18 +73,10 @@ describe('FinalRollsMap', function() {
                 }
             };
 
-            // Setup an advisor mock to inject a pre-determined category
-            var aMock = {
-                getBestCategory: function(scorecard, upperScore, dice) {
-                    return bestCategory;
-                }
-            };
-
             // Setup the FinalRollsMap module
             var FinalRollsMap = proxyquire('../finalrollsmap', {
                 './combinatorics': cmbMock,
-                './score-calculator': scMock,
-                './advisor': aMock
+                './score-calculator': scMock
             });
 
             // Setup arguments for the method call
@@ -137,18 +121,10 @@ describe('FinalRollsMap', function() {
                 }
             };
 
-            // Setup an advisor mock to inject a pre-determined category
-            var aMock = {
-                getBestCategory: function(scorecard, upperScore, dice) {
-                    return bestCategory;
-                }
-            };
-
             // Setup the FinalRollsMap module
             var FinalRollsMap = proxyquire('../finalrollsmap', {
                 './combinatorics': cmbMock,
-                './score-calculator': scMock,
-                './advisor': aMock
+                './score-calculator': scMock
             });
 
             // Setup arguments for the method call
@@ -193,18 +169,10 @@ describe('FinalRollsMap', function() {
                 }
             };
 
-            // Setup an advisor mock to inject a pre-determined category
-            var aMock = {
-                getBestCategory: function(scorecard, upperScore, dice) {
-                    return bestCategory;
-                }
-            };
-
             // Setup the FinalRollsMap module
             var FinalRollsMap = proxyquire('../finalrollsmap', {
                 './combinatorics': cmbMock,
-                './score-calculator': scMock,
-                './advisor': aMock
+                './score-calculator': scMock
             });
 
             // Setup arguments for the method call
@@ -233,17 +201,9 @@ describe('FinalRollsMap', function() {
                 getAllRolls: function() { return []; }
             };
 
-            // Setup an advisor mock to inject a pre-determined category
-            var aMock = {
-                getBestCategory: function(scorecard, upperScore, dice) {
-                    return bestCategory;
-                }
-            };
-
             // Setup the FinalRollsMap module
             var FinalRollsMap = proxyquire('../finalrollsmap', {
-                './combinatorics': cmbMock,
-                './advisor': aMock
+                './combinatorics': cmbMock
             });
 
             // Instantiate the FinalRollsMap

@@ -1,5 +1,4 @@
 var cmb = require('./combinatorics');
-var advisor = require('./advisor');
 var scorecalc = require('./score-calculator');
 var _ = require('lodash');
 var dicekey = require('./dicekey');
@@ -15,23 +14,31 @@ var FinalRollsMap = function(scorecard, upperScore, stateMap) {
 
     // Loop through each possible roll and calculate their EV's
     cmb.getAllRolls().forEach(function(roll) {
-        // Get the best category to score in for this roll
-        var bestCategory = advisor.getBestCategory(scorecard, upperScore, roll);
+        var rollEV = 0; // Will contain the EV for this roll
 
-        // Find the new upper score from scoring in this category
-        var categoryScore = scorecalc.getCategoryScore(bestCategory, roll);
-        var isUpperCategory = bestCategory >= 0 && bestCategory <= 5;
-        var newUpperScore = isUpperCategory ? upperScore + categoryScore : upperScore;
+        // Iterate through each unmarked category
+        for (var i = 0; i < scorecard.length; i++) {
+            // Skip marked categories
+            if (scorecard[i] != 0) continue;
 
-        // Calculate the category EV
-        var newScorecard = getMarkedScorecard(scorecard, bestCategory);
-        var bestCategoryEV = stateMap.getEV(newScorecard, newUpperScore) + categoryScore;
+            // Find the new upper score from scoring in this category
+            var categoryScore = scorecalc.getCategoryScore(i, roll);
+            var isUpperCategory = i >= 0 && i <= 5;
+            var newUpperScore = isUpperCategory ? upperScore + categoryScore : upperScore;
 
-        // Check if scoring the category results in the upper section bonus
-        if (upperScore < 63 && newUpperScore >= 63) bestCategoryEV += 50;
+            // Calculate the category EV
+            var newScorecard = getMarkedScorecard(scorecard, i);
+            var categoryEV = stateMap.getEV(newScorecard, newUpperScore) + categoryScore;
+
+            // Check if scoring the category results in the upper section bonus
+            if (upperScore < 63 && newUpperScore >= 63) categoryEV += 50;
+
+            // Check if this is the best EV for the category
+            if (categoryEV > rollEV) rollEV = categoryEV;
+        }
 
         // Store the EV for this roll
-        rollsEV[dicekey(roll)] = bestCategoryEV;
+        rollsEV[dicekey(roll)] = rollEV;
     });
 
     this.rollsEV = rollsEV;
