@@ -71,6 +71,9 @@ public class Generator {
         }
 
         public Void call() throws Exception {
+            // Log the start time
+            long startTime = System.currentTimeMillis();
+
             // Setup the widget
             Widget widget = new Widget(scorecard, upperScore, nextStates);
 
@@ -80,8 +83,11 @@ public class Generator {
             // Store the EV in the state map
             nextStates.addEV(scorecard, upperScore, ev);
 
+            // Log the stop time
+            long stopTime = System.currentTimeMillis();
+
             // Notify the GeneratorListener
-            listener.onGeneratorProgress();
+            listener.onGeneratorProgress(stopTime - startTime);
 
             return null;
         }

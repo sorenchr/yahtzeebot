@@ -16,6 +16,9 @@ public class GeneratorSingleThread {
             for (Scorecard scorecard : CombinatoricsUtil.getAllScorecards(round)) {
                 // Generate all possible upper scores
                 for (int upperScore = 0; upperScore <= 63; upperScore++) {
+                    // Log the start time
+                    long startTime = System.currentTimeMillis();
+
                     // Setup the widget
                     Widget widget = new Widget(scorecard, upperScore, stateMap);
 
@@ -25,8 +28,11 @@ public class GeneratorSingleThread {
                     // Store the EV in the state map
                     stateMap.addEV(scorecard, upperScore, ev);
 
+                    // Log the stop time
+                    long stopTime = System.currentTimeMillis();
+
                     // Notify the GeneratorListener
-                    listener.onGeneratorProgress();
+                    listener.onGeneratorProgress(stopTime - startTime);
                 }
             }
         }

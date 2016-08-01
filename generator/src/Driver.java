@@ -9,10 +9,10 @@ public class Driver {
 
         final int[] count = {0};
         generator.generate(new GeneratorListener() {
-            public void onGeneratorProgress() {
+            public void onGeneratorProgress(long executionTime) {
                 count[0]++;
                 double percentDone = (double)count[0] * 100 / 2097076;
-                System.out.println("Finished state: " + count[0] + ", " + percentDone + "% done");
+                System.out.println("Finished state: " + count[0] + ", " + percentDone + "% done, avg. exec time: " + executionTime + "ms");
             }
         });
     }
