@@ -1,8 +1,9 @@
 package yahtzeebot.generator;
 
+import yahtzeebot.caches.CombinatoricsCache;
+import yahtzeebot.caches.ProbabilityCache;
 import yahtzeebot.game.Category;
 import yahtzeebot.game.Scorecard;
-import yahtzeebot.util.CombinatoricsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,13 @@ import java.util.concurrent.Executors;
 public class Generator {
 
     private ExecutorService executor;
+    private CombinatoricsCache cmb;
+    private ProbabilityCache prob;
 
-    public Generator() {
+    public Generator(CombinatoricsCache cmb, ProbabilityCache prob) {
+        this.cmb = cmb;
+        this.prob = prob;
+
         // Setup the ThreadPoolExecutor that will handle state calculation
         executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
@@ -29,7 +35,7 @@ public class Generator {
             List<WidgetCallable> roundCallables = new ArrayList<WidgetCallable>();
 
             // Generate all possible scorecards
-            for (Scorecard scorecard : CombinatoricsUtil.getAllScorecards(round)) {
+            for (Scorecard scorecard : cmb.getAllScorecards(round)) {
                 // Generate all possible upper scores
                 for (int upperScore = 0; upperScore <= 63; upperScore++) {
                     // Create the widget callable and store it for future execution
@@ -75,7 +81,7 @@ public class Generator {
             long startTime = System.currentTimeMillis();
 
             // Setup the widget
-            Widget widget = new Widget(scorecard, upperScore, nextStates);
+            Widget widget = new Widget(scorecard, upperScore, nextStates, cmb, prob);
 
             // Get the EV
             double ev = widget.getEV();

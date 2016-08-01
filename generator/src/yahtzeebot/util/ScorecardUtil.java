@@ -3,7 +3,7 @@ package yahtzeebot.util;
 import yahtzeebot.game.Category;
 import yahtzeebot.game.Dice;
 
-public class ScoreUtil {
+public class ScorecardUtil {
 
     public static int getCategoryScore(Category category, Dice roll) {
         switch (category) {

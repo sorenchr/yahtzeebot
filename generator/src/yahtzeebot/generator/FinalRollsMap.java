@@ -1,28 +1,28 @@
 package yahtzeebot.generator;
 
 
+import yahtzeebot.caches.CombinatoricsCache;
 import yahtzeebot.game.Category;
 import yahtzeebot.game.Dice;
 import yahtzeebot.game.Scorecard;
-import yahtzeebot.util.CombinatoricsUtil;
-import yahtzeebot.util.ScoreUtil;
+import yahtzeebot.util.ScorecardUtil;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class FinalRollsMap implements DiceMap {
 
     private Map<Dice, Double> rollsEV = new HashMap<Dice, Double>();
 
-    public FinalRollsMap(Scorecard scorecard, int upperScore, StateMap stateMap) {
-        for (Dice roll : CombinatoricsUtil.getAllRolls()) {
+    public FinalRollsMap(Scorecard scorecard, int upperScore, StateMap stateMap,
+                         CombinatoricsCache cmb) {
+        for (Dice roll : cmb.getAllRolls()) {
             double rollEV = 0;
 
             // Loop through each unmarked category
             for (Category category : scorecard.getUnmarkedCategories()) {
                 // Find the new upper score from scoring in this category
-                int categoryScore = ScoreUtil.getCategoryScore(category, roll);
+                int categoryScore = ScorecardUtil.getCategoryScore(category, roll);
                 int newUpperScore = category.isUpperCategory() ? upperScore + categoryScore : upperScore;
 
                 // Calculate the category EV
