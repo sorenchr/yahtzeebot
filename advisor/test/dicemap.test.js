@@ -85,7 +85,6 @@ describe('DiceMap', function() {
             // that the permutations of the dice also access the same value
             var count = 0;
             gens.diceUpTo(5).forEach(function(dice) {
-                console.log(dice);
                 // Get all permutations of the given dice
                 var dicePerms = permutations(dice);
 

@@ -3,37 +3,28 @@ var assert = chai.assert;
 var _ = require('lodash');
 var cmb = require('../combinatorics');
 var gens = require('../generators');
-var dicekey = require('../dicekey');
+var DiceMap = require('../dicemap');
 
 // Generate all rolls and keepers
 var allRolls = sortedDiceArray(gens.dice(5));
 var allKeepers = sortedDiceArray(gens.diceUpTo(5));
 
 // Generate all keepers from rolls
-var rollKeepers = {};
+var rollKeepers = new DiceMap();
 allRolls.forEach(function(roll) {
-    var key = dicekey(roll);
-    rollKeepers[key] = [];
-
-    allKeepers.forEach(function(keepers) {
-        if (arrayContains(roll, keepers)) rollKeepers[key].push(keepers);
-    });
+    var keepers = allKeepers.filter(keepers => arrayContains(roll, keepers));
+    rollKeepers.add(roll, keepers);
 });
 
 // Generate all rolls from keepers
-var keepersRolls = {};
+var keepersRolls = new DiceMap();
 allKeepers.forEach(function(keepers) {
-    var key = dicekey(keepers);
-    keepersRolls[key] = [];
-
-    allRolls.forEach(function(roll) {
-        if (arrayContains(roll, keepers)) keepersRolls[key].push(roll);
-    });
+    var rolls = allRolls.filter(roll => arrayContains(roll, keepers));
+    keepersRolls.add(keepers, rolls);
 });
 
 /**
- * Checks if the first array contains the second array, order
- * does not matter.
+ * Checks if the first array contains the second array, order does not matter.
  * @param a The first array.
  * @param b The second array.
  * @returns {boolean} True if array `a` contains array `b`.
@@ -85,7 +76,7 @@ describe('combinatorics', function() {
             this.timeout(0); // Kill the timeout for this test
 
             allRolls.forEach(function(roll) {
-                var keepersForRoll = rollKeepers[dicekey(roll)];
+                var keepersForRoll = rollKeepers.get(roll);
                 var cbRollKeepers = sortedDiceArray(cmb.getKeepers(roll));
 
                 assert.equal(keepersForRoll.length, cbRollKeepers.length);
@@ -99,7 +90,7 @@ describe('combinatorics', function() {
             this.timeout(0); // Kill the timeout for this test
 
             allKeepers.forEach(function(keepers) {
-                var rollsForKeepers = keepersRolls[dicekey(keepers)];
+                var rollsForKeepers = keepersRolls.get(keepers);
                 var cbKeepersRolls = sortedDiceArray(cmb.getRolls(keepers));
 
                 assert.equal(rollsForKeepers.length, cbKeepersRolls.length);
