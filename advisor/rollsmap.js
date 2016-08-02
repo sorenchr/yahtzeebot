@@ -1,5 +1,5 @@
 var cmb = require('./combinatorics');
-var dicekey = require('./dicekey');
+var DiceMap = require('./dicemap');
 
 /**
  * Represents a map of rolls and their EV's.
@@ -7,7 +7,7 @@ var dicekey = require('./dicekey');
  * @constructor
  */
 var RollsMap = function(nextKeepers) {
-    var rollsEV = {};
+    var rollsEV = new DiceMap();
 
     // Iterate through all possible rolls and calculate their EV's
     cmb.getAllRolls().forEach(function(roll) {
@@ -19,7 +19,7 @@ var RollsMap = function(nextKeepers) {
             if (keepersEV >= ev) ev = keepersEV;
         });
 
-        rollsEV[dicekey(roll)] = ev;
+        rollsEV.add(roll, ev);
     });
 
     this.rollsEV = rollsEV;
@@ -31,7 +31,7 @@ var RollsMap = function(nextKeepers) {
  * @returns {number} The EV for the given roll.
  */
 RollsMap.prototype.getEV = function(roll) {
-    return this.rollsEV[dicekey(roll)];
+    return this.rollsEV.get(roll);
 };
 
 module.exports = RollsMap;

@@ -1,9 +1,9 @@
-var dicekey = require('./dicekey');
+var DiceMap = require('./dicemap');
 var _ = require('lodash');
 
 var probability = module.exports;
 var facsCache = {}; // Will contain all cached factorials
-var probCache = {}; // Will contain all cached probabilities
+var probCache = new DiceMap(); // Will contain all cached probabilities
 
 /**
  * Returns the probability of rolling the given dice.
@@ -11,11 +11,8 @@ var probCache = {}; // Will contain all cached probabilities
  * @returns {number} The probability of rolling the given dice.
  */
 probability.getDiceProbability = function(dice) {
-    // Generate the cache key
-    var cacheKey = dicekey(dice);
-
     // Check if the result exists in the cache
-    if (cacheKey in probCache) return probCache[cacheKey];
+    if (probCache.has(dice)) return probCache.get(dice);
 
     // Get the cardinality of the roll as an array
     var cardinality = _.values(_.countBy(dice));
@@ -24,9 +21,10 @@ probability.getDiceProbability = function(dice) {
     var cdProd = cardinality.reduce((x,y) => x * fac(y), 1);
 
     // Calculate the dice probability and store it in the cache
-    probCache[cacheKey] = fac(dice.length) / (Math.pow(6, dice.length) * cdProd);
+    var prob = fac(dice.length) / (Math.pow(6, dice.length) * cdProd);
+    probCache.add(dice, prob);
 
-    return probCache[cacheKey];
+    return prob;
 };
 
 /**

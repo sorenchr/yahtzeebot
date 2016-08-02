@@ -2,6 +2,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var proxyquire = require('proxyquire');
 var _ = require('lodash');
+var DiceMap = require('../dicemap');
 
 describe('KeepersMap', function() {
     describe('#constructor', function() {
@@ -103,11 +104,15 @@ describe('KeepersMap', function() {
             // Instantiate the FinalRollsMap
             var map = new KeepersMap();
 
-            map.keepersEV = { '111000': 27.5 };
+            map.keepersEV = new DiceMap();
+            map.keepersEV.add([1,2,3], 27.5);
             assert.equal(map.getEV([1,2,3]), 27.5);
-            map.keepersEV = { '111000': 2123.2 };
+
+            map.keepersEV = new DiceMap();
+            map.keepersEV.add([1,2,3], 2123.2);
             assert.equal(map.getEV([1,2,3]), 2123.2);
-            map.keepersEV = {};
+
+            map.keepersEV = new DiceMap();
             assert.isUndefined(map.getEV([1,2,3]));
         });
     });

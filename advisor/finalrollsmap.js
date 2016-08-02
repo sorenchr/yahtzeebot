@@ -1,7 +1,7 @@
 var cmb = require('./combinatorics');
 var scorecalc = require('./score-calculator');
 var _ = require('lodash');
-var dicekey = require('./dicekey');
+var DiceMap = require('./dicemap');
 
 /**
  * Represents a map of final rolls and their EV's.
@@ -10,7 +10,7 @@ var dicekey = require('./dicekey');
  * @constructor
  */
 var FinalRollsMap = function(scorecard, upperScore, stateMap) {
-    var rollsEV = {};
+    var rollsEV = new DiceMap();
 
     // Loop through each possible roll and calculate their EV's
     cmb.getAllRolls().forEach(function(roll) {
@@ -38,7 +38,7 @@ var FinalRollsMap = function(scorecard, upperScore, stateMap) {
         }
 
         // Store the EV for this roll
-        rollsEV[dicekey(roll)] = rollEV;
+        rollsEV.add(roll, rollEV);
     });
 
     this.rollsEV = rollsEV;
@@ -50,7 +50,7 @@ var FinalRollsMap = function(scorecard, upperScore, stateMap) {
  * @returns {number} The EV for the given roll.
  */
 FinalRollsMap.prototype.getEV = function(roll) {
-    return this.rollsEV[dicekey(roll)];
+    return this.rollsEV.get(roll);
 };
 
 /**

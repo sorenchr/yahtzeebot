@@ -1,6 +1,6 @@
 var cmb = require('./combinatorics');
 var prob = require('./probability');
-var dicekey = require('./dicekey');
+var DiceMap = require('./dicemap');
 
 /**
  * Represents a map of keepers and their EV's.
@@ -8,7 +8,7 @@ var dicekey = require('./dicekey');
  * @constructor
  */
 var KeepersMap = function(nextRolls) {
-    var keepersEV = {};
+    var keepersEV = new DiceMap();
 
     // Loop through each possible keepers and calculate their EV's
     cmb.getAllKeepers().forEach(function(keepers) {
@@ -21,7 +21,7 @@ var KeepersMap = function(nextRolls) {
         });
 
         // Store the EV for these keepers
-        keepersEV[dicekey(keepers)] = evSum;
+        keepersEV.add(keepers, evSum);
     });
 
     this.keepersEV = keepersEV;
@@ -55,7 +55,7 @@ function subtractDice(a, b) {
  * @returns {number} The EV for the given keepers.
  */
 KeepersMap.prototype.getEV = function(keepers) {
-    return this.keepersEV[dicekey(keepers)];
+    return this.keepersEV.get(keepers);
 };
 
 module.exports = KeepersMap;

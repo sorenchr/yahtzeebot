@@ -3,6 +3,7 @@ var assert = chai.assert;
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 var _ = require('lodash');
+var DiceMap = require('../dicemap');
 
 describe('FinalRollsMap', function() {
     describe('#constructor', function() {
@@ -209,12 +210,16 @@ describe('FinalRollsMap', function() {
             // Instantiate the FinalRollsMap
             var map = new FinalRollsMap();
 
-            map.rollsEV = { '500000': 27.5 };
+            map.rollsEV = new DiceMap();
+            map.rollsEV.add([1,1,1,1,1], 27.5);
             assert.equal(map.getEV([1,1,1,1,1]), 27.5);
-            map.rollsEV = { '500000': 2123.2 };
+
+            map.rollsEV = new DiceMap();
+            map.rollsEV.add([1,1,1,1,1], 2123.2);
             assert.equal(map.getEV([1,1,1,1,1]), 2123.2);
-            map.rollsEV = {};
-            assert.isUndefined(map.getEV([1,2,3]));
+
+            map.rollsEV = new DiceMap();
+            assert.isUndefined(map.getEV([1,2,3,4,5]));
         });
     });
 });
