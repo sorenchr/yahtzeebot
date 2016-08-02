@@ -46,3 +46,16 @@ generators.powerset = function(arr) {
 
     return rest.concat(combined);
 };
+
+
+/**
+ * Clones the given scorecard and returns the clone with the marked category.
+ * @param scorecard The scorecard to clone.
+ * @param i The category to mark as scored.
+ * @returns {Array} The cloned scorecard with the marked category.
+ */
+generators.markedScorecard = function(scorecard, i) {
+    var newScorecard = _.clone(scorecard);
+    newScorecard[i] = true;
+    return newScorecard;
+};

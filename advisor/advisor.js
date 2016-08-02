@@ -8,6 +8,7 @@ var cmb = require('./combinatorics');
 var FinalRollsMap = require('./finalrollsmap');
 var KeepersMap = require('./keepersmap');
 var RollsMap = require('./rollsmap');
+var gens = require('./generators');
 
 var advisor = module.exports;
 
@@ -123,7 +124,7 @@ advisor.getBestCategory = function(scorecard, upperScore, dice) {
         if (scorecard[i] != 0) continue;
 
         // Create a new scorecard where the category is marked
-        var newScorecard = getMarkedScorecard(scorecard, i);
+        var newScorecard = gens.markedScorecard(scorecard, i);
 
         // Find the new upper score from scoring in this category
         var categoryScore = scorecalc.getCategoryScore(i, dice);
@@ -145,15 +146,3 @@ advisor.getBestCategory = function(scorecard, upperScore, dice) {
 
     return bestCategory;
 };
-
-/**
- * Clones the given scorecard and returns the clone with the marked category.
- * @param scorecard The scorecard to clone.
- * @param i The category to mark as scored.
- * @returns {Array} The cloned scorecard with the marked category.
- */
-function getMarkedScorecard(scorecard, i) {
-    var newScorecard = _.clone(scorecard);
-    newScorecard[i] = true;
-    return newScorecard;
-}

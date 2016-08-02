@@ -2,6 +2,7 @@ var cmb = require('./combinatorics');
 var scorecalc = require('./score-calculator');
 var _ = require('lodash');
 var DiceMap = require('./dicemap');
+var gens = require('./generators');
 
 /**
  * Represents a map of final rolls and their EV's.
@@ -27,7 +28,7 @@ var FinalRollsMap = function(scorecard, upperScore, stateMap) {
             var newUpperScore = isUpperCategory ? upperScore + categoryScore : upperScore;
 
             // Calculate the category EV
-            var newScorecard = getMarkedScorecard(scorecard, i);
+            var newScorecard = gens.markedScorecard(scorecard, i);
             var categoryEV = stateMap.getEV(newScorecard, newUpperScore) + categoryScore;
 
             // Check if scoring the category results in the upper section bonus
@@ -52,17 +53,5 @@ var FinalRollsMap = function(scorecard, upperScore, stateMap) {
 FinalRollsMap.prototype.getEV = function(roll) {
     return this.rollsEV.get(roll);
 };
-
-/**
- * Clones the given scorecard and returns the clone with the marked category.
- * @param scorecard The scorecard to clone.
- * @param i The category to mark as scored.
- * @returns {Array} The cloned scorecard with the marked category.
- */
-function getMarkedScorecard(scorecard, i) {
-    var newScorecard = _.clone(scorecard);
-    newScorecard[i] = true;
-    return newScorecard;
-}
 
 module.exports = FinalRollsMap;
