@@ -9,11 +9,11 @@ public class Scorecard {
     private Set<Category> markedCategories;
 
     public Scorecard(Collection<Category> markedCategories) {
-        this.markedCategories = new HashSet<Category>(markedCategories);
+        this.markedCategories = Collections.unmodifiableSet(new HashSet<Category>(markedCategories));
     }
 
-    public Scorecard(Category[] markedCategories) {
-        this.markedCategories = new HashSet<Category>(Arrays.asList(markedCategories));
+    public Scorecard(Category... markedCategories) {
+        this.markedCategories = Collections.unmodifiableSet(new HashSet<Category>(Arrays.asList(markedCategories)));
     }
 
     public Scorecard withMarkedCategory(Category category) {
@@ -22,8 +22,14 @@ public class Scorecard {
         return new Scorecard(newMarkedCategories);
     }
 
-    public List<Category> getUnmarkedCategories() {
-        return new ArrayList(CollectionUtils.subtract(Arrays.asList(Category.values()), markedCategories));
+    public Set<Category> getMarkedCategories() {
+        return markedCategories;
+    }
+
+    public Set<Category> getUnmarkedCategories() {
+        List<Category> allCategories = Arrays.asList(Category.values());
+        Collection<Category> subtracted = CollectionUtils.subtract(allCategories, markedCategories);
+        return new HashSet<Category>(subtracted);
     }
 
     @Override
