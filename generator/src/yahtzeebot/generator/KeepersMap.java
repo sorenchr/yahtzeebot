@@ -18,7 +18,7 @@ public class KeepersMap implements DiceMap {
 
             // Iterate through all possible rolls resulting from these keepers
             for (Dice roll : cmb.getRolls(keepers)) {
-                Dice remDice = roll.subtractDice(keepers);
+                Dice remDice = roll.withoutDice(keepers);
                 evSum += prob.getProbability(remDice) * nextRollsMap.getEV(roll);
             }
 

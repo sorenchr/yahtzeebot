@@ -100,7 +100,7 @@ public class CombinatoricsCache {
         List<Dice> keepers = new ArrayList<Dice>();
 
         // Setup generator
-        ICombinatoricsVector<Die> initialSet = Factory.createVector(roll.getDice());
+        ICombinatoricsVector<Die> initialSet = Factory.createVector(roll.getDiceAsList());
         Generator<Die> gen = Factory.createSubSetGenerator(initialSet);
 
         // Add each combination to the keepers list
@@ -120,7 +120,7 @@ public class CombinatoricsCache {
 
         // Pad each set of remaining dice with the keepers
         for (Dice dice : remDice) {
-            rolls.add(dice.addDice(keepers));
+            rolls.add(dice.withDice(keepers));
         }
 
         return rolls;

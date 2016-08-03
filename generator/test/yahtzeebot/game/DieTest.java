@@ -32,4 +32,30 @@ public class DieTest {
         Die die = new Die(7);
     }
 
+    @Test
+    public void shouldHaveTransitiveHashCodeAndEquals() {
+        Die die1 = new Die(5);
+        Die die2 = new Die(5);
+        Die die3 = new Die(5);
+        Assert.assertTrue(die1.equals(die2));
+        Assert.assertTrue(die2.equals(die3));
+        Assert.assertTrue(die1.equals(die3));
+    }
+
+    @Test
+    public void shouldHaveSymmetricHashCodeAndEquals() {
+        Die die1 = new Die(5);
+        Die die2 = new Die(5);
+        Assert.assertTrue(die1.equals(die2));
+        Assert.assertTrue(die2.equals(die1));
+        Assert.assertEquals(die1.hashCode(), die2.hashCode());
+    }
+
+    @Test
+    public void shouldHaveReflexiveHashCodeEquals() {
+        Die die = new Die(5);
+        Assert.assertTrue(die.equals(die));
+        Assert.assertEquals(die.hashCode(), die.hashCode());
+    }
+
 }

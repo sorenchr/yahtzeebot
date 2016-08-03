@@ -16,7 +16,7 @@ public class ProbabilityCache {
         // Build the probability cache
         for (Dice dice : cmb.getAllKeepers()) {
             // Get the cardinality of the dice
-            Map<Die, Integer> cardinalityMap = dice.getCardinalityMap();
+            Map<Integer, Integer> cardinalityMap = dice.getCardinalityMap();
 
             // Calculate the cardinality product of the dice
             int cdProd = 1;

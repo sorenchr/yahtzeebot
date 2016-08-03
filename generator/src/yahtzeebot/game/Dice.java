@@ -2,25 +2,44 @@ package yahtzeebot.game;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Dice {
 
     private List<Die> dice;
-    private Map<Die, Integer> cardinalityMap;
+    private Map<Integer, Integer> cardinalityMap;
+
+    public Dice(int... dice) {
+        List<Die> diceList = new ArrayList<Die>();
+
+        for (int i = 0; i < dice.length; i++) {
+            diceList.add(new Die(dice[i]));
+        }
+
+        this.dice = Collections.unmodifiableList(diceList);
+        generateCardinalityMap();
+    }
 
     public Dice(List<Die> dice) {
-        this.dice = dice;
-        cardinalityMap = CollectionUtils.getCardinalityMap(this.dice);
+        this.dice = Collections.unmodifiableList(dice);
+        generateCardinalityMap();
     }
 
     public int getNumberOfDice(int faceValue) {
-        return cardinalityMap.get(faceValue);
+        if (cardinalityMap.containsKey(faceValue)) return cardinalityMap.get(faceValue);
+        return 0;
     }
 
-    public Map<Die, Integer> getCardinalityMap() {
+    private void generateCardinalityMap() {
+        Map<Die, Integer> dieCardinalityMap = CollectionUtils.getCardinalityMap(this.dice);
+        Map<Integer, Integer> fvCardinalityMap = new HashMap<Integer, Integer>();
+        for (Map.Entry<Die, Integer> entry : dieCardinalityMap.entrySet()) {
+            fvCardinalityMap.put(entry.getKey().getFaceValue(), entry.getValue());
+        }
+        this.cardinalityMap = Collections.unmodifiableMap(fvCardinalityMap);
+    }
+
+    public Map<Integer, Integer> getCardinalityMap() {
         return cardinalityMap;
     }
 
@@ -38,18 +57,19 @@ public class Dice {
         return sum;
     }
 
-    public List<Die> getDice() {
+    public List<Die> getDiceAsList() {
         return dice;
     }
 
-    public Dice addDice(Dice dice) {
+    public Dice withDice(Dice dice) {
         List<Die> newDice = new ArrayList<Die>(this.dice);
-        newDice.addAll(dice.getDice());
+        newDice.addAll(dice.getDiceAsList());
         return new Dice(newDice);
     }
 
-    public Dice subtractDice(Dice dice) {
-        List<Die> newDices = new ArrayList(CollectionUtils.subtract(this.dice, dice.dice));
+    public Dice withoutDice(Dice dice) {
+        Collection<Die> subtracted = CollectionUtils.subtract(this.dice, dice.dice);
+        List<Die> newDices = new ArrayList<Die>(subtracted);
         return new Dice(newDices);
     }
 
