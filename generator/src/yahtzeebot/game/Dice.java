@@ -11,29 +11,13 @@ public class Dice {
     private List<Die> dice;
     private Map<Die, Integer> cardinalityMap;
 
-    public Dice(int... dice) {
-        this.dice = new ArrayList<Die>();
-
-        for (int i = 0; i < dice.length; i++) {
-            this.dice.add(new Die(dice[i]));
-        }
-
-        cardinalityMap = CollectionUtils.getCardinalityMap(this.dice);
-    }
-
     public Dice(List<Die> dice) {
         this.dice = dice;
         cardinalityMap = CollectionUtils.getCardinalityMap(this.dice);
     }
 
     public int getNumberOfDice(int faceValue) {
-        int numberOfDice = 0;
-
-        for (Die die : dice) {
-            if (die.getFaceValue() == faceValue) numberOfDice++;
-        }
-
-        return numberOfDice;
+        return cardinalityMap.get(faceValue);
     }
 
     public Map<Die, Integer> getCardinalityMap() {
@@ -76,12 +60,12 @@ public class Dice {
 
         Dice dice1 = (Dice) o;
 
-        return getCardinalityMap().equals(dice1.getCardinalityMap());
+        return cardinalityMap.equals(dice1.getCardinalityMap());
     }
 
     @Override
     public int hashCode() {
-        return getCardinalityMap().hashCode();
+        return cardinalityMap.hashCode();
     }
 
 }
