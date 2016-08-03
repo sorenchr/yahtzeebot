@@ -9,16 +9,21 @@ import java.util.Map;
 public class Dice {
 
     private List<Die> dice;
+    private Map<Die, Integer> cardinalityMap;
 
     public Dice(int... dice) {
         this.dice = new ArrayList<Die>();
+
         for (int i = 0; i < dice.length; i++) {
             this.dice.add(new Die(dice[i]));
         }
+
+        cardinalityMap = CollectionUtils.getCardinalityMap(this.dice);
     }
 
     public Dice(List<Die> dice) {
         this.dice = dice;
+        cardinalityMap = CollectionUtils.getCardinalityMap(this.dice);
     }
 
     public int getNumberOfDice(int faceValue) {
@@ -32,7 +37,7 @@ public class Dice {
     }
 
     public Map<Die, Integer> getCardinalityMap() {
-        return CollectionUtils.getCardinalityMap(dice);
+        return cardinalityMap;
     }
 
     public int getSize() {
