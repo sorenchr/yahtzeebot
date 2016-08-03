@@ -13,10 +13,13 @@ public class DriverMulti {
         Generator generator = new Generator(cmb, prob);
 
         final int[] count = {0};
+        final long start = System.currentTimeMillis();
         generator.generate(new GeneratorListener() {
             public void onGeneratorProgress(long executionTime) {
                 count[0]++;
-                System.out.println("Done with " + count[0] + ", exec time: " + executionTime + "ms");
+                double deltaSecs = ((double)System.currentTimeMillis() - start) / 1000;
+                double widgetsPerSec = count[0] / deltaSecs;
+                System.out.println("Done with " + count[0] + ", exec time: " + executionTime + "ms, widgets pr. sec: " + widgetsPerSec);
             }
         });
     }
