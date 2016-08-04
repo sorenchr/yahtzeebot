@@ -54,18 +54,6 @@ describe('score-calculator', function() {
             });
         });
 
-        describe('fours', function() {
-            it('should return 8', function() {
-                var dice = [2, 2, 4, 3, 4];
-                assert.equal(scorecalc.getCategoryScore(3, dice), 8);
-            });
-
-            it('should return 20', function() {
-                var dice = [4, 4, 4, 4, 4];
-                assert.equal(scorecalc.getCategoryScore(3, dice), 20);
-            });
-        });
-
         describe('fives', function() {
             it('should return 15', function() {
                 var dice = [5, 5, 4, 5, 4];
