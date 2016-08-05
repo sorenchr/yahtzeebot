@@ -5,7 +5,7 @@ import yahtzeebot.caches.CombinatoricsCache;
 import yahtzeebot.game.Category;
 import yahtzeebot.game.Dice;
 import yahtzeebot.game.Scorecard;
-import yahtzeebot.util.ScorecardUtil;
+import yahtzeebot.utils.ScorecardUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class FinalRollsMap implements DiceMap {
             // Loop through each unmarked category
             for (Category category : scorecard.getUnmarkedCategories()) {
                 // Find the new upper score from scoring in this category
-                int categoryScore = ScorecardUtil.getCategoryScore(category, roll);
+                int categoryScore = ScorecardUtils.getCategoryScore(category, roll);
                 int newUpperScore = category.isUpperCategory() ? upperScore + categoryScore : upperScore;
 
                 // Calculate the category EV
