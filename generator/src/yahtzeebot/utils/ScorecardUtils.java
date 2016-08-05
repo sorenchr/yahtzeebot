@@ -1,9 +1,9 @@
-package yahtzeebot.util;
+package yahtzeebot.utils;
 
 import yahtzeebot.game.Category;
 import yahtzeebot.game.Dice;
 
-public class ScorecardUtil {
+public class ScorecardUtils {
 
     public static int getCategoryScore(Category category, Dice roll) {
         switch (category) {
