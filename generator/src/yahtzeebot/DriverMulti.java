@@ -5,6 +5,12 @@ import yahtzeebot.caches.ProbabilityCache;
 import yahtzeebot.generator.Generator;
 import yahtzeebot.generator.GeneratorListener;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class DriverMulti {
 
     public static void main(String[] args) throws InterruptedException {
@@ -14,12 +20,22 @@ public class DriverMulti {
 
         final int[] count = {0};
         final long start = System.currentTimeMillis();
+
+        Runnable helloRunnable = new Runnable() {
+            public void run() {
+                double deltaSecs = ((double)System.currentTimeMillis() - start) / 1000;
+                double widgetsPerSec = count[0] / deltaSecs;
+                System.out.println("Done with " + count[0] + ", widgets pr. sec: " + widgetsPerSec);
+            }
+        };
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(helloRunnable, 0, 3, TimeUnit.SECONDS);
+
+
         generator.generate(new GeneratorListener() {
             public void onGeneratorProgress(long executionTime) {
                 count[0]++;
-                double deltaSecs = ((double)System.currentTimeMillis() - start) / 1000;
-                double widgetsPerSec = count[0] / deltaSecs;
-                System.out.println("Done with " + count[0] + ", exec time: " + executionTime + "ms, widgets pr. sec: " + widgetsPerSec);
             }
         });
     }
