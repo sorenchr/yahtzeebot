@@ -14,13 +14,17 @@ public class StateMap {
         map.put(state, ev);
     }
 
-    public Double getEV(Scorecard scorecard, double upperScore) {
+    public Double getEV(Scorecard scorecard, int upperScore) {
         State state = new State(scorecard, upperScore);
         return map.get(state);
     }
 
     public int getSize() {
         return map.size();
+    }
+
+    public Map<State, Double> getAll() {
+        return map;
     }
 
 }

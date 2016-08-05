@@ -6,11 +6,19 @@ import yahtzeebot.game.Scorecard;
 public class State {
 
     private Scorecard scorecard;
-    private double ev;
+    private int upperScore;
 
-    public State(Scorecard scorecard, double ev) {
+    public State(Scorecard scorecard, int upperScore) {
         this.scorecard = scorecard;
-        this.ev = ev;
+        this.upperScore = upperScore;
+    }
+
+    public Scorecard getScorecard() {
+        return scorecard;
+    }
+
+    public int getUpperScore() {
+        return upperScore;
     }
 
     @Override
@@ -20,17 +28,15 @@ public class State {
 
         State state = (State) o;
 
-        if (Double.compare(state.ev, ev) != 0) return false;
+        if (upperScore != state.upperScore) return false;
         return scorecard.equals(state.scorecard);
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = scorecard.hashCode();
-        temp = Double.doubleToLongBits(ev);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = scorecard.hashCode();
+        result = 31 * result + upperScore;
         return result;
     }
+
 }

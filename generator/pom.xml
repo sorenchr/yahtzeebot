@@ -31,5 +31,12 @@
             <artifactId>gson</artifactId>
             <version>2.7</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/me.tongfei/progressbar_2.11 -->
+        <dependency>
+            <groupId>me.tongfei</groupId>
+            <artifactId>progressbar_2.11</artifactId>
+            <version>0.4.0</version>
+        </dependency>
     </dependencies>
 </project>
