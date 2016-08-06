@@ -4,8 +4,8 @@ var _ = require('lodash');
  * Represents a new empty StateMap.
  * @constructor
  */
-var StateMap = function() {
-    this.map = {};
+var StateMap = function(map) {
+    this.map = map || {};
 };
 
 /**
@@ -71,17 +71,6 @@ StateMap.prototype.size = function() {
  */
 StateMap.prototype.toJSON = function() {
     return this.map;
-};
-
-/**
- * Parses a JSON object into a StateMap instance.
- * @param json The JSON object to parse from.
- * @returns {StateMap} A StateMap instance based on the parsed JSON.
- */
-StateMap.fromJSON = function(json) {
-    var map = new StateMap();
-    map.map = json;
-    return map;
 };
 
 module.exports = StateMap;

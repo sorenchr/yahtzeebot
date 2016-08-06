@@ -14,6 +14,44 @@ describe('StateMap ', function() {
 
             assert.equal(statemap.size(), 0);
         });
+
+        it('should construct map from JSON', function() {
+            var json = {
+                '111111111111111': { '55': 25.2, '53': 26.78 },
+                '000111000111000': { '23': 43.222 }
+            };
+
+            var statemap = new StateMap(json);
+
+            var scorecard1 = new Array(15).fill(true);
+            var scorecard2 = [0,0,0,1,1,1,0,0,0,1,1,1,0,0,0].map(x => x ? true : false);
+
+            assert.equal(3, statemap.size());
+            assert.equal(statemap.getEV(scorecard1,55),25.2);
+            assert.equal(statemap.getEV(scorecard1,53),26.78);
+            assert.equal(statemap.getEV(scorecard2,23),43.222);
+        });
+
+        it('should read JSON from toJSON()', function() {
+            var statemap = new StateMap();
+
+            var scorecard1 = new Array(15).fill(true);
+            var scorecard2 = new Array(15).fill(false);
+
+            statemap.addEV(scorecard1, 1, 55.2);
+            statemap.addEV(scorecard1, 2, 230.2);
+            statemap.addEV(scorecard2, 22, 20.2);
+            statemap.addEV(scorecard2, 3, 50);
+
+            var json = statemap.toJSON();
+            var parsed = new StateMap(json);
+
+            assert.equal(parsed.size(), 4);
+            assert.equal(parsed.getEV(scorecard1, 1), 55.2);
+            assert.equal(parsed.getEV(scorecard1, 2), 230.2);
+            assert.equal(parsed.getEV(scorecard2, 22), 20.2);
+            assert.equal(parsed.getEV(scorecard2, 3), 50);
+        });
     });
 
     describe('#getEV', function () {
@@ -79,46 +117,6 @@ describe('StateMap ', function() {
             assert.equal(statemap.size(), 1); // Ensure that only one entry exists in the map
             assert.equal(statemap.getEV(scorecard, 63), ev);
             assert.isNull(statemap.getEV(scorecard, 62));
-        });
-    });
-
-    describe('#fromJSON', function() {
-        it('should construct map from JSON', function() {
-            var json = {
-                '111111111111111': { '55': 25.2, '53': 26.78 },
-                '000111000111000': { '23': 43.222 }
-            };
-
-            var statemap = StateMap.fromJSON(json);
-
-            var scorecard1 = new Array(15).fill(true);
-            var scorecard2 = [0,0,0,1,1,1,0,0,0,1,1,1,0,0,0].map(x => x ? true : false);
-
-            assert.equal(3, statemap.size());
-            assert.equal(statemap.getEV(scorecard1,55),25.2);
-            assert.equal(statemap.getEV(scorecard1,53),26.78);
-            assert.equal(statemap.getEV(scorecard2,23),43.222);
-        });
-
-        it('should read JSON from toJSON()', function() {
-            var statemap = new StateMap();
-
-            var scorecard1 = new Array(15).fill(true);
-            var scorecard2 = new Array(15).fill(false);
-
-            statemap.addEV(scorecard1, 1, 55.2);
-            statemap.addEV(scorecard1, 2, 230.2);
-            statemap.addEV(scorecard2, 22, 20.2);
-            statemap.addEV(scorecard2, 3, 50);
-
-            var json = statemap.toJSON();
-            var parsed = StateMap.fromJSON(json);
-
-            assert.equal(parsed.size(), 4);
-            assert.equal(parsed.getEV(scorecard1, 1), 55.2);
-            assert.equal(parsed.getEV(scorecard1, 2), 230.2);
-            assert.equal(parsed.getEV(scorecard2, 22), 20.2);
-            assert.equal(parsed.getEV(scorecard2, 3), 50);
         });
     });
 
