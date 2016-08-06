@@ -2,12 +2,11 @@ var chai = require('chai');
 var assert = chai.assert;
 var _ = require('lodash');
 var cmb = require('../combinatorics');
-var gens = require('../generators');
 var DiceMap = require('../dicemap');
 
 // Generate all rolls and keepers
-var allRolls = sortedDiceArray(gens.dice(5));
-var allKeepers = sortedDiceArray(gens.diceUpTo(5));
+var allRolls = sortedDiceArray(generateAllDice(5));
+var allKeepers = sortedDiceArray(generateAllDiceUpTo(5));
 
 // Generate all keepers from rolls
 var rollKeepers = new DiceMap();
@@ -108,4 +107,32 @@ describe('combinatorics', function() {
 function sortedDiceArray(arr) {
     for (var i = 0; i < arr.length; i++) arr[i].sort();
     return arr;
+}
+
+function generateAllDice(size) {
+    if (size === 0) return [[]];
+
+    var dice = [];
+
+    var nextDice = generateAllDice(size-1);
+    for (var i = 1; i <= 6; i++) {
+        dice = dice.concat(nextDice.map(x => x.concat(i)));
+    }
+
+    return _.uniqWith(dice, isSameDice);
+}
+
+/**
+ * Evaluates if the two dice arrays are the same, equality is based
+ * on their cardinality being the same.
+ * @param arr1 The first dice array.
+ * @param arr2 The second dice array.
+ * @returns {boolean} True if the two dice arrays are the same, false otherwise.
+ */
+function isSameDice(arr1, arr2) {
+    return _.isEqual(_.countBy(arr1), _.countBy(arr2));
+}
+
+function generateAllDiceUpTo(size) {
+    return _.flatten(_.range(size+1).map(x => generateAllDice(x)));
 }

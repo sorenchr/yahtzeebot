@@ -1,11 +1,10 @@
 var _ = require('lodash');
 var DiceMap = require('./dicemap');
-var gens = require('./generators');
 
 var combinatorics = module.exports;
 
 // Generate all rolls and keepers available
-var allRolls = gens.dice(5), allKeepers = gens.diceUpTo(5);
+var allRolls = dice(5), allKeepers = diceUpTo(5);
 
 // Setup caches for keepers from all rolls, and rolls from all keepers
 var keepersCache = new DiceMap(), rollsCache = new DiceMap();
@@ -36,7 +35,7 @@ combinatorics.getKeepers = function(roll) {
     if (keepersCache.has(roll)) return keepersCache.get(roll);
 
     // Generate the keepers from the roll
-    var keepers = _.uniqWith(gens.powerset(roll), isSameDice);
+    var keepers = _.uniqWith(powerset(roll), isSameDice);
 
     // Store the result in the cache for future lookups
     keepersCache.add(roll, keepers);
@@ -54,7 +53,7 @@ combinatorics.getRolls = function(keepers) {
     if (rollsCache.has(keepers)) return rollsCache.get(keepers);
 
     // Generate the remaining dice and attach them to the keepers
-    var remDice = gens.dice(5 - keepers.length);
+    var remDice = dice(5 - keepers.length);
     var rolls = remDice.map(x => keepers.concat(x));
 
     // Store the result in the cache for future lookups
@@ -72,4 +71,49 @@ combinatorics.getRolls = function(keepers) {
  */
 function isSameDice(arr1, arr2) {
     return _.isEqual(_.countBy(arr1), _.countBy(arr2));
+}
+
+/**
+ * Generates all possible dice for the given size.
+ * @param size The size used for generating the dice.
+ * @returns {Array} All possible dice for the given size.
+ */
+function dice(size) {
+    var recurFn = function(size, minValue) {
+        if (size === 0) return [[]];
+
+        var output = [];
+
+        for (var i = minValue; i <= 6; i++) {
+            var nextDice = recurFn(size-1, i);
+            var padded = nextDice.map(x => _.concat(i, x));
+            output = output.concat(padded);
+        }
+
+        return output;
+    };
+
+    return recurFn(size, 1);
+}
+
+/**
+ * Generates all possible dice with the size from 0 to the given size.
+ * @param size The maximum size for the dice.
+ */
+function diceUpTo(size) {
+    return _.flatten(_.range(size+1).map(x => dice(x)));
+}
+
+/**
+ * Generates the powerset (all possible subsets) of the given array.
+ * @param arr The array to generate the powerset for.
+ * @returns {Array} The power of the given array.
+ */
+function powerset(arr) {
+    if (arr.length === 0) return [[]];
+
+    var rest = powerset(arr.slice(1));
+    var combined = rest.map(x => x.concat(arr[0]));
+
+    return rest.concat(combined);
 }

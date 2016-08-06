@@ -1,7 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
 var DiceMap = require('../dicemap');
-var gens = require('../generators');
 
 describe('DiceMap', function() {
     describe('#constructor', function() {
@@ -81,21 +80,9 @@ describe('DiceMap', function() {
         it('should return true for dice with same cardinality', function() {
             var dm = new DiceMap();
 
-            // Loop through each possible dice of size 0 to 5 and check
-            // that the permutations of the dice also access the same value
-            var count = 0;
-            gens.diceUpTo(5).forEach(function(dice) {
-                // Get all permutations of the given dice
-                var dicePerms = permutations(dice);
+            dm.add([1,2,3], 'bdd');
 
-                // Store the count for these dice
-                dm.add(dice, count);
-
-                // Check that each permutation retrieves the same value
-                dicePerms.forEach(function(dicePerm) {
-                    assert.equal(dm.get(dicePerm), count);
-                });
-            });
+            assert.isTrue(dm.has([3,2,1]));
         });
 
         it('should return false if a value hasn\'t been added', function() {
