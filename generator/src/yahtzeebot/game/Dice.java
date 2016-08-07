@@ -88,4 +88,17 @@ public class Dice {
         return cardinalityMap.hashCode();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Dice [");
+
+        for (Die die : dice) {
+            sb.append(die.getFaceValue() + ",");
+        }
+
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
