@@ -48,7 +48,7 @@ function writeAndExit(msg) {
 function simulateGame() {
     // Simulate the game and record the delta timespan
     var startTime = Date.now();
-    var score = simulator.simulate();
+    var score = simulator.simulateGame();
     var endTime = Date.now();
 
     // Tick the progress bar
