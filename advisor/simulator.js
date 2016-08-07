@@ -55,7 +55,7 @@ simulator.simulateRound = function(scorecard, score, upperScore) {
 
     // Get game state flags
     var isUpperCategory = category < 6;
-    var triggersBonus = isUpperCategory && upperScore < 63 && (upperScore + categoryScore) > 63;
+    var triggersBonus = isUpperCategory && upperScore < 63 && (upperScore + categoryScore) >= 63;
 
     return {
         scorecard: markedScorecard(scorecard, category),
