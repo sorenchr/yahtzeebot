@@ -2,6 +2,9 @@
   "name": "Advisor",
   "version": "1.0.0",
   "author": "Søren Qvist Christensen <soren.qvist@gmail.com>",
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha"
+  },
   "dependencies": {
     "commander": "^2.9.0",
     "lodash": "^4.12.0",
