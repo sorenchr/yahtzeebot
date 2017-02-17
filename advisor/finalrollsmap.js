@@ -5,8 +5,8 @@ var DiceMap = require('./dicemap');
 
 /**
  * Represents a map of final rolls and their EV's.
- * @param scorecard The scorecard used in constructing the final rolls.
- * @param upperScore The upper score used in constructing the final rolls.
+ * @param scorecard {boolean[]} The scorecard used in constructing the final rolls.
+ * @param upperScore {number} The upper score used in constructing the final rolls.
  * @constructor
  */
 var FinalRollsMap = function(scorecard, upperScore, stateMap) {
@@ -46,7 +46,7 @@ var FinalRollsMap = function(scorecard, upperScore, stateMap) {
 
 /**
  * Returns the EV for the given roll.
- * @param roll The roll to look up EV for.
+ * @param roll {number[]} The roll to look up EV for.
  * @returns {number} The EV for the given roll.
  */
 FinalRollsMap.prototype.getEV = function(roll) {
@@ -55,8 +55,9 @@ FinalRollsMap.prototype.getEV = function(roll) {
 
 /**
  * Clones the given scorecard and returns the clone with the marked category.
- * @param scorecard The scorecard to clone.
- * @param i The category to mark as scored.
+ * @private
+ * @param scorecard {boolean[]} The scorecard to clone.
+ * @param i {number} The category to mark as scored.
  * @returns {Array} The cloned scorecard with the marked category.
  */
 function markedScorecard(scorecard, i) {

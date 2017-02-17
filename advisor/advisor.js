@@ -9,6 +9,9 @@ var FinalRollsMap = require('./finalrollsmap');
 var KeepersMap = require('./keepersmap');
 var RollsMap = require('./rollsmap');
 
+/** 
+ * @module advisor 
+ */
 var advisor = module.exports;
 
 // The StateMap used for EV lookups
@@ -16,7 +19,8 @@ var settings;
 
 /**
  * Initialize the module.
- * @param settings An object containing settings.
+ * @memberof module:advisor
+ * @param settings {Object} An object containing settings.
  */
 advisor.init = function(initSettings) {
     if (!isValidSettings(initSettings)) throw new ArgumentError('Invalid settings: ' + initSettings);
@@ -25,7 +29,8 @@ advisor.init = function(initSettings) {
 
 /**
  * Checks if the given settings are valid.
- * @param settings The settings to check.
+ * @private
+ * @param settings {Object} The settings to check.
  * @returns {boolean} True if the settings are valid, false otherwise.
  */
 function isValidSettings(settings) {
@@ -38,10 +43,11 @@ function isValidSettings(settings) {
 
 /**
  * Returns the best keepers to choose from the given game state.
- * @param scorecard The scorecard represented as a 15-integer array.
- * @param upperScore The upper score.
- * @param dice The 5 dice currently held by the player.
- * @param rollsLeft The number of rolls left before scoring.
+ * @memberof module:advisor
+ * @param scorecard {boolean[]} The scorecard represented as a 15-integer array.
+ * @param upperScore {number} The upper score.
+ * @param dice {number[]} The 5 dice currently held by the player.
+ * @param rollsLeft {number} The number of rolls left before scoring.
  * @returns {Array.<number>} The best keepers to choose from the given game state.
  */
 advisor.getBestKeepers = function(scorecard, upperScore, dice, rollsLeft) {
@@ -77,9 +83,10 @@ advisor.getBestKeepers = function(scorecard, upperScore, dice, rollsLeft) {
 /**
  * Retrieves the best keepers from the given roll in the given map
  * of keepers and their EV's.
- * @param roll The roll from which the best keepers will be selected.
- * @param allKeepers A map of keepers and their associated EV.
- * @returns {Array} The best keepers to select from the given roll.
+ * @private
+ * @param roll {number[]} The roll from which the best keepers will be selected.
+ * @param allKeepers {Object<string, number>} A map of keepers and their associated EV.
+ * @returns {number[]} The best keepers to select from the given roll.
  */
 function getBestKeepers(roll, allKeepers) {
     var bestKeepers = [];
@@ -99,9 +106,10 @@ function getBestKeepers(roll, allKeepers) {
 
 /**
  * Returns the best category to score in from the given game state.
- * @param scorecard The scorecard represented as a 15-integer array.
- * @param upperScore The upper score.
- * @param dice The 5 dice currently held by the player.
+ * @memberof module:advisor
+ * @param scorecard {boolean[]} The scorecard represented as a boolean array.
+ * @param upperScore {number} The upper score.
+ * @param dice {number[]} The 5 dice currently held by the player.
  * @returns {number} The best category to score in from the given game state.
  */
 advisor.getBestCategory = function(scorecard, upperScore, dice) {
@@ -148,9 +156,10 @@ advisor.getBestCategory = function(scorecard, upperScore, dice) {
 
 /**
  * Clones the given scorecard and returns the clone with the marked category.
- * @param scorecard The scorecard to clone.
- * @param i The category to mark as scored.
- * @returns {Array} The cloned scorecard with the marked category.
+ * @private
+ * @param scorecard {boolean[]} The scorecard to clone.
+ * @param i {number} The category to mark as scored.
+ * @returns {boolean[]} The cloned scorecard with the marked category.
  */
 function markedScorecard(scorecard, i) {
     var newScorecard = _.clone(scorecard);

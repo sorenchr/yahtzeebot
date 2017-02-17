@@ -1,8 +1,12 @@
+/** 
+ * @module validator 
+ */
 var validator = module.exports;
 
 /**
  * Checks if the given die is an integer between 1 and 6.
- * @param die The die to check.
+ * @memberof module:validator
+ * @param die {number} The die to check.
  * @returns {boolean} True if the die is valid, false otherwise.
  */
 validator.isValidDie = function(die) {
@@ -13,7 +17,8 @@ validator.isValidDie = function(die) {
 
 /**
  * Checks if the given dice is an array containing valid dice.
- * @param dice The dice to check.
+ * @memberof module:validator
+ * @param dice {number[]} The dice to check.
  * @returns {boolean} True if the dice are valid, false otherwise.
  */
 validator.isValidDice = function(dice) {
@@ -25,7 +30,8 @@ validator.isValidDice = function(dice) {
 
 /**
  * Checks if the given roll is an array of size 5 containing valid dice.
- * @param roll The roll to check.
+ * @memberof module:validator
+ * @param roll {number[]} The roll to check.
  * @returns {boolean} True if the roll is valid, false otherwise.
  */
 validator.isValidRoll = function(roll) {
@@ -36,7 +42,8 @@ validator.isValidRoll = function(roll) {
 
 /**
  * Checks if the given category is an integer between 0 and 14.
- * @param category The category to check.
+ * @memberof module:validator
+ * @param category {number} The category to check.
  * @returns {boolean} True if the category is valid, false otherwise.
  */
 validator.isValidCategory = function(category) {
@@ -47,7 +54,8 @@ validator.isValidCategory = function(category) {
 
 /**
  * Checks if the given scorecard is an array of size 15 with boolean values.
- * @param scorecard The scorecard to check.
+ * @memberof module:validator
+ * @param scorecard {boolean[]} The scorecard to check.
  * @returns {boolean} True if the scorecard is valid, false otherwise.
  */
 validator.isValidScorecard = function(scorecard) {
@@ -59,7 +67,8 @@ validator.isValidScorecard = function(scorecard) {
 
 /**
  * Checks if the given upper score is a positive integer (0 also allowed).
- * @param upperScore The upper score to check.
+ * @memberof module:validator
+ * @param upperScore {number} The upper score to check.
  * @returns {boolean} True if the upper score is valid, false otherwise.
  */
 validator.isValidUpperScore = function(upperScore) {
@@ -70,7 +79,8 @@ validator.isValidUpperScore = function(upperScore) {
 
 /**
  * Checks if the given EV is a positive number between 0 and 63.
- * @param ev The EV to check.
+ * @memberof module:validator
+ * @param ev {float} The EV to check.
  * @returns {boolean} True if the EV is valid, false otherwise.
  */
 validator.isValidEV = function(ev) {
@@ -83,7 +93,8 @@ validator.isValidEV = function(ev) {
 
 /**
  * Checks if the given rolls left is a positive integer between 1 and 2.
- * @param rollsLeft The rolls left to check.
+ * @memberof module:validator
+ * @param rollsLeft {number} The rolls left to check.
  * @returns {boolean} True if the rolls left is valid, false otherwise.
  */
 validator.isValidRollsLeft = function(rollsLeft) {

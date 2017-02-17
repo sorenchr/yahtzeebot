@@ -4,7 +4,7 @@ var DiceMap = require('./dicemap');
 
 /**
  * Represents a map of keepers and their EV's.
- * @param nextRolls A map of the next rolls these keepers should refer to.
+ * @param nextRolls {Object<string, number>} A map of the next rolls these keepers should refer to.
  * @constructor
  */
 var KeepersMap = function(nextRolls) {
@@ -30,9 +30,10 @@ var KeepersMap = function(nextRolls) {
 /**
  * Subtracts all dice in `b` from the dice in `a`. Essentially
  * a subtraction of cardinalities.
- * @param a The first array.
- * @param b The second array that will subtracted from the first array.
- * @returns {Array.<number>} The difference between the two arrays.
+ * @private
+ * @param a {number[]} The first array.
+ * @param b {number[]} The second array that will subtracted from the first array.
+ * @returns {number[]} The difference between the two arrays.
  */
 function subtractDice(a, b) {
     var newDice = a.slice(0);
@@ -51,7 +52,7 @@ function subtractDice(a, b) {
 
 /**
  * Returns the EV for the given keepers.
- * @param keepers The keepers to look up EV for.
+ * @param keepers {number[]} The keepers to look up EV for.
  * @returns {number} The EV for the given keepers.
  */
 KeepersMap.prototype.getEV = function(keepers) {

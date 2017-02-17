@@ -1,13 +1,17 @@
 var validator = require('./validator');
 var ArgumentError = require('./argumenterror');
 
+/** 
+ * @module score-calculator 
+ */
 var sc = module.exports;
 
 /**
  * Gets the score for the given category and roll.
- * @param category The category, a number between 0 and 14.
- * @param roll The 5-dice roll.
- * @returns {*} The score for the given category and roll.
+ * @memberof module:score-calculator
+ * @param category {number} The category, a number between 0 and 14.
+ * @param roll {number[]} The 5-dice roll.
+ * @returns {number} The score for the given category and roll.
  */
 sc.getCategoryScore = function(category, roll) {
     // Get the score for the given category
@@ -36,8 +40,9 @@ sc.getCategoryScore = function(category, roll) {
 
 /**
  * Returns the number of dice in the roll with the given face-value.
- * @param faceValue The face-value to check for.
- * @param roll The roll to search.
+ * @private
+ * @param faceValue {number} The face-value to check for.
+ * @param roll {number[]} The roll to search.
  * @returns {number} The number of dice in the roll with the given face-value.
  */
 function getNumberOfDice(faceValue, roll) {
@@ -52,7 +57,8 @@ function getNumberOfDice(faceValue, roll) {
 
 /**
  * Returns the one-pair score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The one-pair score for this roll.
  */
 function getOnePairScore(roll) {
@@ -69,7 +75,8 @@ function getOnePairScore(roll) {
 
 /**
  * Returns the two-pair score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The two-pair score for this roll.
  */
 function getTwoPairsScore(roll) {
@@ -88,7 +95,8 @@ function getTwoPairsScore(roll) {
 
 /**
  * Returns the three-of-a-kind score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The three-of-a-kind score for this roll.
  */
 function getThreeOfAKindScore(roll) {
@@ -103,7 +111,8 @@ function getThreeOfAKindScore(roll) {
 
 /**
  * Returns the four-of-a-kind score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The four-of-a-kind score for this roll.
  */
 function getFourOfAKindScore(roll) {
@@ -118,7 +127,8 @@ function getFourOfAKindScore(roll) {
 
 /**
  * Returns the small straight score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The small straight score for this roll.
  */
 function getSmallStraightScore(roll) {
@@ -135,7 +145,8 @@ function getSmallStraightScore(roll) {
 
 /**
  * Returns the large straight score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The large straight score for this roll.
  */
 function getLargeStraightScore(roll) {
@@ -152,7 +163,8 @@ function getLargeStraightScore(roll) {
 
 /**
  * Returns the full house score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The full house score for this roll.
  */
 function getFullHouseScore(roll) {
@@ -176,8 +188,9 @@ function getFullHouseScore(roll) {
 
 /**
  * Returns the chance score for this roll.
- * @param roll The roll to check.
- * @returns {*} The chance score for this roll.
+ * @private
+ * @param roll {number[]} The roll to check.
+ * @returns {number} The chance score for this roll.
  */
 function getChanceScore(roll) {
     return roll.reduce(function(x, y) {
@@ -187,7 +200,8 @@ function getChanceScore(roll) {
 
 /**
  * Returns the yahtzee score for this roll.
- * @param roll The roll to check.
+ * @private
+ * @param roll {number[]} The roll to check.
  * @returns {number} The yahtzee score for this roll.
  */
 function getYahtzeeScore(roll) {

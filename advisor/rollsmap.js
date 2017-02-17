@@ -3,7 +3,7 @@ var DiceMap = require('./dicemap');
 
 /**
  * Represents a map of rolls and their EV's.
- * @param nextKeepers A map of the next keepers these rolls should refer to.
+ * @param nextKeepers {Object<string, number>} A map of the next keepers these rolls should refer to.
  * @constructor
  */
 var RollsMap = function(nextKeepers) {
@@ -27,7 +27,7 @@ var RollsMap = function(nextKeepers) {
 
 /**
  * Returns the EV for the given roll.
- * @param roll The roll to look up EV for.
+ * @param roll {number[]} The roll to look up EV for.
  * @returns {number} The EV for the given roll.
  */
 RollsMap.prototype.getEV = function(roll) {

@@ -1,13 +1,16 @@
 var DiceMap = require('./dicemap');
 var _ = require('lodash');
-
+/** 
+ * @module probability 
+ */
 var probability = module.exports;
+
 var facsCache = {}; // Will contain all cached factorials
 var probCache = new DiceMap(); // Will contain all cached probabilities
 
 /**
  * Returns the probability of rolling the given dice.
- * @param dice The dice to calculate the probability for.
+ * @param dice {number[]} The dice to calculate the probability for.
  * @returns {number} The probability of rolling the given dice.
  */
 probability.getDiceProbability = function(dice) {
@@ -29,7 +32,7 @@ probability.getDiceProbability = function(dice) {
 
 /**
  * Computes the n'th factorial.
- * @param n The number to compute the factorial for.
+ * @param n {number} The number to compute the factorial for.
  * @returns {number} The n'th factorial.
  */
 function fac(n) {

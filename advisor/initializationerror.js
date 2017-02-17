@@ -2,7 +2,7 @@ var util = require('util');
 
 /**
  * Represents a module initialization error.
- * @param message The message to display when thrown.
+ * @param message {string} The message to display when thrown.
  * @constructor
  */
 function InitializationError(message) {

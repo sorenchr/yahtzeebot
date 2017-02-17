@@ -10,8 +10,8 @@ var StateMap = function(map) {
 
 /**
  * Returns the stored EV for the given scorecard and upper score pair.
- * @param scorecard The scorecard to lookup EV for.
- * @param upperScore The upper score to lookup EV for.
+ * @param scorecard {boolean[]} The scorecard to lookup EV for.
+ * @param upperScore {number} The upper score to lookup EV for.
  * @returns {float|null} The EV for the given scorecard and upper score pair,
  * or null if no EV entry exists.
  */
@@ -30,9 +30,9 @@ StateMap.prototype.getEV = function(scorecard, upperScore) {
 
 /**
  * Stores the given EV for the given scorecard and upper score pair.
- * @param scorecard The scorecard to store the EV for.
- * @param upperScore The upper score to store the EV for.
- * @param ev The EV to store for the scorecard and upper score pair.
+ * @param scorecard {boolean[]} The scorecard to store the EV for.
+ * @param upperScore {number} The upper score to store the EV for.
+ * @param ev {float} The EV to store for the scorecard and upper score pair.
  */
 StateMap.prototype.addEV = function (scorecard, upperScore, ev) {
     // Generate the scorecard key
@@ -50,7 +50,8 @@ StateMap.prototype.addEV = function (scorecard, upperScore, ev) {
 
 /**
  * Generates a string representation of the given scorecard array.
- * @param scorecard The scorecard that used for the string representation.
+ * @private
+ * @param scorecard {boolean[]} The scorecard that used for the string representation.
  * @returns {string} A string representation of the given scorecard array.
  */
 function scorecardToString(scorecard) {

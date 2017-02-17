@@ -11,8 +11,8 @@ var DiceMap = function() {
 
 /**
  * Adds the given value to the map with the given dice as key.
- * @param dice The dice to use as key.
- * @param value The value to store.
+ * @param dice {number[]} The dice to use as key.
+ * @param value {*} The value to store.
  */
 DiceMap.prototype.add = function(dice, value) {
     this.map[key(dice)] = value;
@@ -20,7 +20,7 @@ DiceMap.prototype.add = function(dice, value) {
 
 /**
  * Retrieves the value for the given dice.
- * @param dice The dice to use as key.
+ * @param dice {number[]} The dice to use as key.
  * @returns {*} The value stored for the given dice.
  */
 DiceMap.prototype.get = function(dice) {
@@ -29,7 +29,7 @@ DiceMap.prototype.get = function(dice) {
 
 /**
  * Checks if the given dice exists as a key in the map.
- * @param dice The dice to use as key.
+ * @param dice {number[]} The dice to use as key.
  * @returns {boolean} True if the key exists, false otherwise.
  */
 DiceMap.prototype.has = function(dice) {
@@ -46,7 +46,8 @@ DiceMap.prototype.size = function() {
 
 /**
  * Generates a key based on the cardinality of the given dice.
- * @param dice The dice to generate a key for.
+ * @private
+ * @param dice {number[]} The dice to generate a key for.
  * @returns {string} The key representing the given dice.
  */
 function key(dice) {
