@@ -13,7 +13,7 @@ commander
     .parse(process.argv);
 
 // Verify arguments
-if (!commander.games) writeAndExit('Please specify the number of games to simulate');
+if (!commander.games) writeAndExit('Please specify the number of games to simulate (-g)');
 if (commander.games < 1) writeAndExit('Number of games must be 1 or greater');
 
 // Setup the ProgressBar
