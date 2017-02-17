@@ -24,6 +24,7 @@ var settings;
  */
 advisor.init = function(initSettings) {
     if (!isValidSettings(initSettings)) throw new ArgumentError('Invalid settings: ' + initSettings);
+    initSettings.stateMap = new StateMap(initSettings.stateMap);
     settings = initSettings;
 };
 
@@ -34,10 +35,15 @@ advisor.init = function(initSettings) {
  * @returns {boolean} True if the settings are valid, false otherwise.
  */
 function isValidSettings(settings) {
+    // Check overall settings
     if (settings !== Object(settings)) return false;
     if (Array.isArray(settings)) return false;
+
+    // Check stateMap entry in settings
     if (!('stateMap' in settings)) return false;
-    if (!(settings['stateMap'] instanceof StateMap)) return false;
+    if (settings.stateMap !== Object(settings.stateMap)) return false;
+    if (Array.isArray(settings.stateMap)) return false;
+    
     return true;
 }
 

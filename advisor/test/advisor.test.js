@@ -31,12 +31,10 @@ describe('advisor', function() {
             assert.throws(advisor.init.bind(advisor, { stateMap: 1 }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: 'a' }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: 2.2 }), ArgumentError);
-            assert.throws(advisor.init.bind(advisor, { stateMap: {} }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: null }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: true }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: undefined }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: NaN }), ArgumentError);
-            assert.throws(advisor.init.bind(advisor, { stateMap: new Date() }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: [2] }), ArgumentError);
         });
 
@@ -201,21 +199,25 @@ describe('advisor', function() {
             };
             var kmSpy = sinon.spy(function() { return kmStub });
 
+            // Setup a mock StateMap
+            var smInstance = sinon.createStubInstance(StateMap);
+            var smMock = function() { return smInstance };
+
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
                 './combinatorics': cmbMock,
                 './finalrollsmap': frmSpy,
-                './keepersmap': kmSpy
+                './keepersmap': kmSpy,
+                './statemap': smMock
             });
-            var smMock = sinon.createStubInstance(StateMap);
-            advisor.init({ stateMap: smMock });
+            advisor.init({ stateMap: {} });
 
             // Call the method on the advisor module
             var bestKeepers = advisor.getBestKeepers(scorecard, upperScore, dice, rollsLeft);
 
             // Verify that the FinalRollsMap was built
             assert.isTrue(frmSpy.calledWithNew());
-            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, smMock));
+            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, smInstance));
 
             // Verify that the KeepersMap was called with the FinalRollsMap
             assert.isTrue(kmSpy.calledWithNew());
@@ -264,22 +266,26 @@ describe('advisor', function() {
                 if (inputMap === rmStub) return firstKmStub;
             });
 
+                        // Setup a mock StateMap
+            var smInstance = sinon.createStubInstance(StateMap);
+            var smMock = function() { return smInstance };
+
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
                 './combinatorics': cmbMock,
                 './finalrollsmap': frmSpy,
                 './keepersmap': kmSpy,
-                './rollsmap': rmSpy
+                './rollsmap': rmSpy,
+                './statemap': smMock
             });
-            var smMock = sinon.createStubInstance(StateMap);
-            advisor.init({ stateMap: smMock });
+            advisor.init({ stateMap: {} });
 
             // Call the method on the advisor module
             var bestKeepers = advisor.getBestKeepers(scorecard, upperScore, dice, rollsLeft);
 
             // Verify that the FinalRollsMap was built
             assert.isTrue(frmSpy.calledWithNew());
-            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, smMock));
+            assert.isTrue(frmSpy.calledWithExactly(scorecard, upperScore, smInstance));
 
             // Verify that the KeepersMap was called with the FinalRollsMap
             assert.isTrue(kmSpy.calledWithNew());
@@ -392,12 +398,13 @@ describe('advisor', function() {
             var scorecardToMatch = '000000000000001';
 
             // Setup a mock StateMap that will return EV based on the input scorecard
-            var smMock = sinon.createStubInstance(StateMap);
-            smMock.getEV = function(scorecard) {
+            var smInstance = sinon.createStubInstance(StateMap);
+            smInstance.getEV = function(scorecard) {
                 var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
                 if (scorecardString === scorecardToMatch) return 2.0;
                 return 1.0;
             };
+            var smMock = function() { return smInstance };
 
             // Setup a score-calculator mock that will just return 0 for everything
             var scMock = {
@@ -406,9 +413,10 @@ describe('advisor', function() {
 
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock
+                './score-calculator': scMock,
+                './statemap': smMock
             });
-            advisor.init({ stateMap: smMock });
+            advisor.init({ stateMap: {} });
 
             // Setup arguments for the getBestCategory() call
             var scorecard = new Array(15).fill(false);
@@ -464,13 +472,14 @@ describe('advisor', function() {
             var dice = [1,2,3,4,5];
 
             // Setup a mock StateMap that will vary in EV based on scorecard input
-            var smMock = sinon.createStubInstance(StateMap);
-            smMock.getEV = function(smScorecard) {
+            var smInstance = sinon.createStubInstance(StateMap);
+            smInstance.getEV = function(smScorecard) {
                 var scorecardString = smScorecard.map(x => x ? 1 : 0).join('');
                 if (scorecardString === '010000000000000') return 40.0;
                 if (scorecardString === '001000000000000') return 20.0;
                 return 0.0;
             };
+            var smMock = function() { return smInstance };
 
             // Setup a score-calculator mock that will vary in EV based on category input
             var scMock = {
@@ -483,7 +492,8 @@ describe('advisor', function() {
 
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock
+                './score-calculator': scMock,
+                './statemap': smMock
             });
             advisor.init({ stateMap: smMock });
 
@@ -494,13 +504,14 @@ describe('advisor', function() {
 
         it('should skip marked categories', function() {
             // Setup a mock StateMap that will vary in EV based on scorecard input
-            var smMock = sinon.createStubInstance(StateMap);
-            smMock.getEV = function(scorecard) {
+            var smInstance = sinon.createStubInstance(StateMap);
+            smInstance.getEV = function(scorecard) {
                 var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
                 if (scorecardString === '000000000000001') return 5.0;
                 if (scorecardString === '000000010000001') return 2.0;
                 return 1.0;
             };
+            var smMock = function() { return smInstance };
 
             // Setup a score-calculator mock that just return 0 on any input
             var scMock = {
@@ -509,7 +520,8 @@ describe('advisor', function() {
 
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock
+                './score-calculator': scMock,
+                './statemap': smMock
             });
             advisor.init({ stateMap: smMock });
 
@@ -529,12 +541,13 @@ describe('advisor', function() {
             var returnEV = 60.9;
 
             // Setup a mock StateMap that will vary in EV based on a specific scorecard
-            var smMock = sinon.createStubInstance(StateMap);
-            smMock.getEV = function(scorecard) {
+            var smInstance = sinon.createStubInstance(StateMap);
+            smInstance.getEV = function(scorecard) {
                 var scorecardString = scorecard.map(x => x ? 1 : 0).join('');
                 if (scorecardString === '111110000000001') return returnEV;
                 return 1.0;
             };
+            var smMock = function() { return smInstance };
 
             // Setup a score-calculator mock that will vary in EV based on category input
             var scMock = {
@@ -546,7 +559,8 @@ describe('advisor', function() {
 
             // Setup the advisor module
             var advisor = proxyquire('../advisor', {
-                './score-calculator': scMock
+                './score-calculator': scMock,
+                './statemap': smMock
             });
             advisor.init({ stateMap: smMock });
 

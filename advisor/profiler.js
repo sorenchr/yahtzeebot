@@ -21,8 +21,7 @@ if (commander.games < 1) writeAndExit('Number of games must be 1 or greater');
 if (!commander.statemap) writeAndExit('Please specify a path to a state map');
 
 // Setup the simulator module
-var stateMapJson = jsonfile.readFileSync(commander.statemap);
-var stateMap = new StateMap(stateMapJson);
+var stateMap = jsonfile.readFileSync(commander.statemap);
 simulator.init({ stateMap: stateMap });
 
 // Setup the ProgressBar
