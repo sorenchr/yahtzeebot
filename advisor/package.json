@@ -2,20 +2,24 @@
   "name": "Advisor",
   "version": "1.0.0",
   "author": "Søren Qvist Christensen <soren.qvist@gmail.com>",
-  "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
-    "coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
-  },
   "dependencies": {
     "commander": "^2.9.0",
     "lodash": "^4.12.0",
     "progress": "^1.1.8"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.22.0",
     "chai": "^3.5.0",
     "file-exists": "^1.0.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-jsdoc3": "^1.0.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-webpack": "^1.5.0",
     "istanbul": "^0.4.5",
     "jsonfile": "^2.3.1",
+    "minami": "^1.1.1",
     "mocha": "^2.4.5",
     "pretty-ms": "^2.1.0",
     "proxyquire": "^1.7.10",

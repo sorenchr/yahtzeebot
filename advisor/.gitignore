@@ -6,3 +6,9 @@ node_modules/
 
 # Istanbul coverage
 coverage/
+
+# JSDoc3 docs
+docs/
+
+# Build artifacts
+out/
