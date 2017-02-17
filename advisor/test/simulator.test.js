@@ -6,36 +6,26 @@ var sinon = require('sinon');
 var StateMap = require('../statemap');
 
 describe('simulator', function() {
-    it('should init advisor with StateMap from config', function() {
+    it('should init advisor with StateMap from own init', function() {
         var avMock = { init: sinon.spy() };
-        var jfMock = { readFileSync: sinon.spy(function() { return '' }) };
-        var smInstance = sinon.createStubInstance(StateMap);
-        var smMock = function() { return smInstance };
-        var cfMock = { stateMap: 'stateMapPath' };
+        var smMock = sinon.createStubInstance(StateMap);
 
         var simulator = proxyquire('../simulator', {
-            './advisor': avMock,
-            'jsonfile': jfMock,
-            './statemap': smMock,
-            './config': cfMock
+            './advisor': avMock
         });
+        simulator.init({ stateMap: smMock });
 
         assert(avMock.init.calledOnce);
         var callArg = avMock.init.getCall(0).args[0];
-        assert.strictEqual(callArg.stateMap, smInstance);
-        assert.strictEqual(jfMock.readFileSync.getCall(0).args[0], cfMock.stateMap);
+        assert.strictEqual(callArg.stateMap, smMock);
     });
 
     describe('#simulateGame', function() {
         it('should call simulateRound() with a fresh game state', function() {
             var avMock = { };
-            var jfMock = { readFileSync: function() { return '' } };
-            var smMock = function() { return sinon.createStubInstance(StateMap) };
 
             var simulator = proxyquire('../simulator', {
-                './advisor': avMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './advisor': avMock
             });
 
             simulator.simulateRound = sinon.spy(function() {
@@ -52,13 +42,9 @@ describe('simulator', function() {
 
         it('should call simulateRound() for reach round in the game', function() {
             var avMock = { };
-            var jfMock = { readFileSync: function() { return '' } };
-            var smMock = function() { return sinon.createStubInstance(StateMap) };
 
             var simulator = proxyquire('../simulator', {
-                './advisor': avMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './advisor': avMock
             });
 
             // Make each call to simulateRound return the following:
@@ -97,13 +83,8 @@ describe('simulator', function() {
                 getBestCategory: function() { return bestCategory; }
             };
 
-            var jfMock = { readFileSync: function() { return '' } };
-            var smMock = function() { return sinon.createStubInstance(StateMap) };
-
             var simulator = proxyquire('../simulator', {
-                './advisor': avMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './advisor': avMock
             });
 
             // bestCategory = 0
@@ -138,14 +119,9 @@ describe('simulator', function() {
                 }
             };
 
-            var jfMock = { readFileSync: function() { return '' } };
-            var smMock = function() { return sinon.createStubInstance(StateMap) };
-
             var simulator = proxyquire('../simulator', {
                 './advisor': avMock,
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
 
             // bestCategory = 0
@@ -177,14 +153,9 @@ describe('simulator', function() {
                 }
             };
 
-            var jfMock = { readFileSync: function() { return '' } };
-            var smMock = function() { return sinon.createStubInstance(StateMap) };
-
             var simulator = proxyquire('../simulator', {
                 './advisor': avMock,
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
 
             // bestCategory = 0, categoryScore = 2 (just enough to trigger the bonus)
@@ -227,14 +198,9 @@ describe('simulator', function() {
                 }
             };
 
-            var jfMock = { readFileSync: function() { return '' } };
-            var smMock = function() { return sinon.createStubInstance(StateMap) };
-
             var simulator = proxyquire('../simulator', {
                 './advisor': avMock,
-                './score-calculator': scMock,
-                'jsonfile': jfMock,
-                './statemap': smMock
+                './score-calculator': scMock
             });
 
             // bestCategory = 0

@@ -1,7 +1,6 @@
 var advisor = require('./advisor');
 var scorecalc = require('./score-calculator');
 var _ = require('lodash');
-var StateMap = require('./statemap');
 
 /** 
  * @module simulator 

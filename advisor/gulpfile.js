@@ -20,12 +20,14 @@ gulp.task('build', () => {
         .pipe(gulp.dest('out/'));
 });
 
-gulp.task('docs', () => {
-    return gulp.src('*.js', {read: false})
+gulp.task('docs', (cb) => {
+    gulp.src(['*.js', '!test/'], { read: false })
         .pipe(jsdoc({
             'template': 'node_modules/minami',
-            'destinaton': './docs/'
-        }))
+            'opts': {
+                'destination': './docs/'
+            }
+        }, cb));
 });
 
 gulp.task('test', () => {
@@ -33,9 +35,14 @@ gulp.task('test', () => {
         .pipe(mocha());
 });
 
-gulp.task('coverage', () => {
-    return gulp.src('test/*.js')
-        .pipe(istanbul())
-        .pipe(mocha({reporter: 'spec'}))
-        .pipe(istanbul.writeReports());
+gulp.task('pre-test', function () {
+  return gulp.src(['*.js', '!test/'])
+    .pipe(istanbul())
+    .pipe(istanbul.hookRequire());
+});
+
+gulp.task('coverage', ['pre-test'], function () {
+  return gulp.src(['test/*.js'])
+    .pipe(mocha())
+    .pipe(istanbul.writeReports());
 });
