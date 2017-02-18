@@ -1,8 +1,8 @@
 var chai = require('chai');
 var assert = chai.assert;
 var _ = require('lodash');
-var cmb = require('../combinatorics');
-var DiceMap = require('../dicemap');
+var cmb = require('../src/combinatorics');
+var DiceMap = require('../src/dicemap');
 
 // Generate all rolls and keepers
 var allRolls = sortedDiceArray(generateAllDice(5));

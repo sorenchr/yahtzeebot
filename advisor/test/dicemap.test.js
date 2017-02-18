@@ -1,6 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
-var DiceMap = require('../dicemap');
+var DiceMap = require('../src/dicemap');
 
 describe('DiceMap', function() {
     describe('#constructor', function() {

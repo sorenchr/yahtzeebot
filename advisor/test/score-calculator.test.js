@@ -1,8 +1,8 @@
 var chai = require('chai');
 var assert = chai.assert;
 var proxyquire = require('proxyquire').noPreserveCache();
-var ArgumentError = require('../argumenterror');
-var scorecalc = require('../score-calculator');
+var ArgumentError = require('../src/argumenterror');
+var scorecalc = require('../src/score-calculator');
 
 describe('score-calculator', function() {
     describe('#getCategoryScore', function() {

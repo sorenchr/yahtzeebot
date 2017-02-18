@@ -1,6 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
-var ArgumentError = require('../argumenterror');
+var ArgumentError = require('../src/argumenterror');
 
 describe('ArgumentError', function() {
     describe('#constructor', function () {

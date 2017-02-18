@@ -1,21 +1,21 @@
 var chai = require('chai');
 var assert = chai.assert;
-var ArgumentError = require('../argumenterror');
-var InitializationError = require('../initializationerror');
+var ArgumentError = require('../src/argumenterror');
+var InitializationError = require('../src/initializationerror');
 var sinon = require('sinon');
-var StateMap = require('../statemap');
+var StateMap = require('../src/statemap');
 var proxyquire = require('proxyquire').noPreserveCache();
 var _ = require('lodash');
 
 describe('advisor', function() {
     describe('#init', function() {
         it('should throw ArgumentError on missing settings', function() {
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
             assert.throws(advisor.init.bind(advisor), ArgumentError);
         });
 
         it('should throw ArgumentError on invalid settings', function() {
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
             assert.throws(advisor.init.bind(advisor, 1), ArgumentError);
             assert.throws(advisor.init.bind(advisor, 'a'), ArgumentError);
             assert.throws(advisor.init.bind(advisor, 2.2), ArgumentError);
@@ -27,7 +27,7 @@ describe('advisor', function() {
         });
 
         it('should throw ArgumentError on invalid StateMap', function() {
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
             assert.throws(advisor.init.bind(advisor, { stateMap: 1 }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: 'a' }), ArgumentError);
             assert.throws(advisor.init.bind(advisor, { stateMap: 2.2 }), ArgumentError);
@@ -39,7 +39,7 @@ describe('advisor', function() {
         });
 
         it('should throw ArgumentError on missing StateMap', function() {
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
             assert.throws(advisor.init.bind(advisor, { something: 'else' }), ArgumentError);
         });
     });
@@ -47,7 +47,7 @@ describe('advisor', function() {
     describe('#getBestKeepers', function () {
         it('should throw InitializationError if the module has not been initialized', function() {
             // Setup the advisor module
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
 
             // Setup the getBestKeepers call arguments
             var scorecard = new Array(15).fill(false);
@@ -68,7 +68,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './validator': vMock
             });
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
@@ -92,7 +92,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './validator': vMock
             });
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
@@ -116,7 +116,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './validator': vMock
             });
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
@@ -140,7 +140,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './validator': vMock
             });
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
@@ -156,7 +156,7 @@ describe('advisor', function() {
 
         it('should throw ArgumentError on full scorecard', function () {
             // Setup the advisor module
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestKeepers call arguments
@@ -204,7 +204,7 @@ describe('advisor', function() {
             var smMock = function() { return smInstance };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './combinatorics': cmbMock,
                 './finalrollsmap': frmSpy,
                 './keepersmap': kmSpy,
@@ -271,7 +271,7 @@ describe('advisor', function() {
             var smMock = function() { return smInstance };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './combinatorics': cmbMock,
                 './finalrollsmap': frmSpy,
                 './keepersmap': kmSpy,
@@ -307,7 +307,7 @@ describe('advisor', function() {
     describe('#getBestCategory', function() {
         it('should throw InitializationError if the module has not been initialized', function() {
             // Setup the advisor module
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
 
             // Setup the getBestCategory call arguments
             var scorecard = new Array(15).fill(false);
@@ -325,7 +325,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './validator': vMock
             });
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
@@ -346,7 +346,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './validator': vMock
             });
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
@@ -367,7 +367,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './validator': vMock
             });
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
@@ -381,7 +381,7 @@ describe('advisor', function() {
 
         it('should throw ArgumentError on full scorecard', function () {
             // Setup the advisor module
-            var advisor = require('../advisor');
+            var advisor = require('../src/advisor');
             advisor.init({ stateMap: sinon.createStubInstance(StateMap) });
 
             // Setup the getBestCategory call arguments
@@ -412,7 +412,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './score-calculator': scMock,
                 './statemap': smMock
             });
@@ -447,7 +447,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './score-calculator': scMock
             });
             advisor.init({ stateMap: smMock });
@@ -491,7 +491,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './score-calculator': scMock,
                 './statemap': smMock
             });
@@ -519,7 +519,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './score-calculator': scMock,
                 './statemap': smMock
             });
@@ -558,7 +558,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './score-calculator': scMock,
                 './statemap': smMock
             });
@@ -595,7 +595,7 @@ describe('advisor', function() {
             };
 
             // Setup the advisor module
-            var advisor = proxyquire('../advisor', {
+            var advisor = proxyquire('../src/advisor', {
                 './score-calculator': scMock
             });
             advisor.init({ stateMap: smMock });

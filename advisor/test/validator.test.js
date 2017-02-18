@@ -1,6 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
-var validator = require('../validator');
+var validator = require('../src/validator');
 
 describe('validator', function() {
     describe('#isValidDice', function () {
@@ -204,7 +204,7 @@ describe('validator', function() {
         });
 
         it('should return false on values above maximum score', function() {
-            var sc = require('../score-calculator');
+            var sc = require('../src/score-calculator');
 
             // Calculate the maximum possible score in the game
             var maxScore = sc.getCategoryScore(0, [1,1,1,1,1]);

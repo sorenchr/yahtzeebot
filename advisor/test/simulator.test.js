@@ -3,14 +3,14 @@ var assert = chai.assert;
 var proxyquire = require('proxyquire');
 var _ = require('lodash');
 var sinon = require('sinon');
-var StateMap = require('../statemap');
+var StateMap = require('../src/statemap');
 
 describe('simulator', function() {
     it('should init advisor with StateMap from own init', function() {
         var avMock = { init: sinon.spy() };
         var smMock = sinon.createStubInstance(StateMap);
 
-        var simulator = proxyquire('../simulator', {
+        var simulator = proxyquire('../src/simulator', {
             './advisor': avMock
         });
         simulator.init({ stateMap: smMock });
@@ -24,7 +24,7 @@ describe('simulator', function() {
         it('should call simulateRound() with a fresh game state', function() {
             var avMock = { };
 
-            var simulator = proxyquire('../simulator', {
+            var simulator = proxyquire('../src/simulator', {
                 './advisor': avMock
             });
 
@@ -43,7 +43,7 @@ describe('simulator', function() {
         it('should call simulateRound() for reach round in the game', function() {
             var avMock = { };
 
-            var simulator = proxyquire('../simulator', {
+            var simulator = proxyquire('../src/simulator', {
                 './advisor': avMock
             });
 
@@ -83,7 +83,7 @@ describe('simulator', function() {
                 getBestCategory: function() { return bestCategory; }
             };
 
-            var simulator = proxyquire('../simulator', {
+            var simulator = proxyquire('../src/simulator', {
                 './advisor': avMock
             });
 
@@ -119,7 +119,7 @@ describe('simulator', function() {
                 }
             };
 
-            var simulator = proxyquire('../simulator', {
+            var simulator = proxyquire('../src/simulator', {
                 './advisor': avMock,
                 './score-calculator': scMock
             });
@@ -153,7 +153,7 @@ describe('simulator', function() {
                 }
             };
 
-            var simulator = proxyquire('../simulator', {
+            var simulator = proxyquire('../src/simulator', {
                 './advisor': avMock,
                 './score-calculator': scMock
             });
@@ -198,7 +198,7 @@ describe('simulator', function() {
                 }
             };
 
-            var simulator = proxyquire('../simulator', {
+            var simulator = proxyquire('../src/simulator', {
                 './advisor': avMock,
                 './score-calculator': scMock
             });

@@ -2,7 +2,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var proxyquire = require('proxyquire');
 var _ = require('lodash');
-var DiceMap = require('../dicemap');
+var DiceMap = require('../src/dicemap');
 
 describe('RollsMap', function() {
     describe('#constructor', function() {
@@ -19,7 +19,7 @@ describe('RollsMap', function() {
             };
 
             // Setup the RollsMap module
-            var RollsMap = proxyquire('../rollsmap', {
+            var RollsMap = proxyquire('../src/rollsmap', {
                 './combinatorics': cmbMock
             });
 
@@ -48,7 +48,7 @@ describe('RollsMap', function() {
             };
 
             // Setup the RollsMap module
-            var RollsMap = proxyquire('../rollsmap', {
+            var RollsMap = proxyquire('../src/rollsmap', {
                 './combinatorics': cmbMock
             });
 

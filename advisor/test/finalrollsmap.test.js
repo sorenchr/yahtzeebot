@@ -3,7 +3,7 @@ var assert = chai.assert;
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 var _ = require('lodash');
-var DiceMap = require('../dicemap');
+var DiceMap = require('../src/dicemap');
 
 describe('FinalRollsMap', function() {
     describe('#constructor', function() {
@@ -35,7 +35,7 @@ describe('FinalRollsMap', function() {
             };
 
             // Setup the FinalRollsMap module
-            var FinalRollsMap = proxyquire('../finalrollsmap', {
+            var FinalRollsMap = proxyquire('../src/finalrollsmap', {
                 './combinatorics': cmbMock,
                 './score-calculator': scMock
             });
@@ -75,7 +75,7 @@ describe('FinalRollsMap', function() {
             };
 
             // Setup the FinalRollsMap module
-            var FinalRollsMap = proxyquire('../finalrollsmap', {
+            var FinalRollsMap = proxyquire('../src/finalrollsmap', {
                 './combinatorics': cmbMock,
                 './score-calculator': scMock
             });
@@ -123,7 +123,7 @@ describe('FinalRollsMap', function() {
             };
 
             // Setup the FinalRollsMap module
-            var FinalRollsMap = proxyquire('../finalrollsmap', {
+            var FinalRollsMap = proxyquire('../src/finalrollsmap', {
                 './combinatorics': cmbMock,
                 './score-calculator': scMock
             });
@@ -171,7 +171,7 @@ describe('FinalRollsMap', function() {
             };
 
             // Setup the FinalRollsMap module
-            var FinalRollsMap = proxyquire('../finalrollsmap', {
+            var FinalRollsMap = proxyquire('../src/finalrollsmap', {
                 './combinatorics': cmbMock,
                 './score-calculator': scMock
             });
@@ -203,7 +203,7 @@ describe('FinalRollsMap', function() {
             };
 
             // Setup the FinalRollsMap module
-            var FinalRollsMap = proxyquire('../finalrollsmap', {
+            var FinalRollsMap = proxyquire('../src/finalrollsmap', {
                 './combinatorics': cmbMock
             });
 

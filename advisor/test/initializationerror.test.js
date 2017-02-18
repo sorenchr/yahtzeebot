@@ -1,6 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
-var InitializationError = require('../initializationerror');
+var InitializationError = require('../src/initializationerror');
 
 describe('InitializationError', function() {
     describe('#constructor', function () {

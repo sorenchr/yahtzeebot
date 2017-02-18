@@ -5,7 +5,7 @@ describe('StateMap ', function() {
     var StateMap;
 
     beforeEach(function() {
-        StateMap = require('../statemap');
+        StateMap = require('../src/statemap');
     });
 
     describe('#constructor', function() {

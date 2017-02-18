@@ -1,6 +1,6 @@
 var chai = require('chai');
 var assert = chai.assert;
-var prob = require('../probability');
+var prob = require('../src/probability');
 
 describe('probability ', function() {
     describe('#getDiceProbability', function() {

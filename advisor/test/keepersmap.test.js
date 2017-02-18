@@ -2,7 +2,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var proxyquire = require('proxyquire');
 var _ = require('lodash');
-var DiceMap = require('../dicemap');
+var DiceMap = require('../src/dicemap');
 
 describe('KeepersMap', function() {
     describe('#constructor', function() {
@@ -22,7 +22,7 @@ describe('KeepersMap', function() {
             var probMock = { getDiceProbability: function() { return 1; } };
 
             // Setup the KeepersMap module
-            var KeepersMap = proxyquire('../keepersmap', {
+            var KeepersMap = proxyquire('../src/keepersmap', {
                 './combinatorics': cmbMock,
                 './probability': probMock
             });
@@ -68,7 +68,7 @@ describe('KeepersMap', function() {
             };
 
             // Setup the KeepersMap module
-            var KeepersMap = proxyquire('../keepersmap', {
+            var KeepersMap = proxyquire('../src/keepersmap', {
                 './combinatorics': cmbMock,
                 './probability': probMock
             });
@@ -97,7 +97,7 @@ describe('KeepersMap', function() {
             };
 
             // Setup the KeepersMap module
-            var KeepersMap = proxyquire('../keepersmap', {
+            var KeepersMap = proxyquire('../src/keepersmap', {
                 './combinatorics': cmbMock
             });
 
