@@ -122,6 +122,10 @@ Returns the best set of keepers from the current dice from the given game state.
 
 Returns the best category to score in from the given game state.
 
+## generator
+
+As of right now the generator subproject is still currently in development under the `feature/generator` branch.
+
 ## Copyright and license
 
 Code copyright 2017 Søren Qvist Christensen. Code released under [the MIT license](https://github.com/sorenchr/yahtzeebot/blob/master/LICENSE).
