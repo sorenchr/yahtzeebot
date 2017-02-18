@@ -96,7 +96,7 @@ $ gulp clean
 The package also contains a profiler that uses the advisor module on simulated games. Run the profiler through Node.JS:
 
 ```sh
-$ node profiler.js -g 10
+$ node profiler.js -g 10 -s statemap.json
 [100%]==========[100%] 0.0s rem.
 Simulated 10 games successfully
 Average score: 277.5
